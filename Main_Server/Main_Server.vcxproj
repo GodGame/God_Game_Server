@@ -76,11 +76,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cMonitor.cpp" />
+    <ClCompile Include="AcceptBase.cpp" />
+    <ClCompile Include="IOCPServer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cMonitor.h" />
+    <ClInclude Include="AcceptBase.h" />
+    <ClInclude Include="IOCPServer.h" />
+    <ClInclude Include="ServerDefine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

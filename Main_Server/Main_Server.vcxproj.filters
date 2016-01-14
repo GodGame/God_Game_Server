@@ -13,21 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\cMonitor">
-      <UniqueIdentifier>{34324cc7-8edf-4c18-b9d3-12b1ec610423}</UniqueIdentifier>
+    <Filter Include="소스 파일\Server">
+      <UniqueIdentifier>{c39c7218-98dc-4611-8427-28200b2ceb08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="cMonitor.cpp">
-      <Filter>소스 파일\cMonitor</Filter>
+    <ClCompile Include="AcceptBase.cpp">
+      <Filter>소스 파일\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPServer.cpp">
+      <Filter>소스 파일\Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cMonitor.h">
-      <Filter>소스 파일\cMonitor</Filter>
+    <ClInclude Include="ServerDefine.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="AcceptBase.h">
+      <Filter>소스 파일\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPServer.h">
+      <Filter>소스 파일\Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

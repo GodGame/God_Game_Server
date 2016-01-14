@@ -77,9 +77,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\cMonitor.cpp" />
+    <ClCompile Include="Singleton.cpp" />
+    <ClCompile Include="VBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cMonitor.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="VBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

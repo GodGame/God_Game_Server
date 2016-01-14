@@ -13,15 +13,39 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Monitor">
+      <UniqueIdentifier>{7a11d932-2e76-4a8b-9f0c-79fb8edd27c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\VBuffer">
+      <UniqueIdentifier>{a083ac25-65af-4fd3-b5d7-430d5255f2fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Singleton">
+      <UniqueIdentifier>{36a29c80-e368-462d-97dd-dbf08b992829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\cMonitor.cpp">
+      <Filter>소스 파일\Monitor</Filter>
+    </ClCompile>
+    <ClCompile Include="VBuffer.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Singleton.cpp">
+      <Filter>소스 파일\Singleton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cMonitor.h">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Monitor</Filter>
+    </ClInclude>
+    <ClInclude Include="VBuffer.h">
+      <Filter>소스 파일\VBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>소스 파일\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
