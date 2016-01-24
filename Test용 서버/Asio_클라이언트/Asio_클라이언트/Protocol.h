@@ -1,4 +1,9 @@
 #pragma once
+#include <SDKDDKVer.h>
+#include <deque>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
 #include <memory.h>
 
 const unsigned short PORT_NUMBER = 31400;
