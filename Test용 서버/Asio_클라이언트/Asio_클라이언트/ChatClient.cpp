@@ -42,14 +42,14 @@ void ChatClient::Connect(boost::asio::ip::tcp::endpoint endpoint)
 {
 	m_nPacketBufferMark = 0;
 
-	/*m_Socket.async_connect(endpoint,
-	boost::bind(&ChatClient::handle_connect, this,
-	boost::asio::placeholders::error)
-	);*/
 	m_Socket.async_connect(endpoint,
-		std::bind(&ChatClient::handle_connect, this,
+		boost::bind(&ChatClient::handle_connect, this,
 		boost::asio::placeholders::error)
 		);
+	//m_Socket.async_connect(endpoint,
+	//	std::bind(&ChatClient::handle_connect, this,
+	//	boost::asio::placeholders::error)
+	//	);
 }
 
 void ChatClient::Close()
