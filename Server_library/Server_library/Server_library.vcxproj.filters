@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\Registry">
       <UniqueIdentifier>{a22cbbb7-0521-438d-b815-453346dddc57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\IniFile">
+      <UniqueIdentifier>{aa2368ab-630f-4d0a-ae8d-91fabcb66c35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,6 +39,9 @@
     <ClInclude Include="Registry.h">
       <Filter>소스 파일\Registry</Filter>
     </ClInclude>
+    <ClInclude Include="IniFile.h">
+      <Filter>소스 파일\IniFile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -46,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="Registry.cpp">
       <Filter>소스 파일\Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="IniFile.cpp">
+      <Filter>소스 파일\IniFile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
