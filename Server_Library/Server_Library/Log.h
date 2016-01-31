@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-#include <stdio.h>
 #define		MAX_BUFFER_LENGTH 256
 class CLog
 {

@@ -28,6 +28,9 @@
     <Filter Include="소스 파일\CircularQueue">
       <UniqueIdentifier>{c96bed28-11cb-487b-90a6-a009655d5c79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\MemoryPool">
+      <UniqueIdentifier>{182da054-cb46-4964-a487-c713aad095e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>소스 파일\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>소스 파일\MemoryPool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

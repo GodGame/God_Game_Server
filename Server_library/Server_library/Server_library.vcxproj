@@ -75,6 +75,7 @@
     <ClInclude Include="CircularQueue.h" />
     <ClInclude Include="IniFile.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Stream.h" />
