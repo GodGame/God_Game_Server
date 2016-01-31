@@ -39,8 +39,6 @@ private:
 	void handle_receive(const boost::system::error_code& error, size_t bytes_transferred);
 
 
-
-
 	int m_nSessionID;
 	boost::asio::ip::tcp::socket m_Socket;
 

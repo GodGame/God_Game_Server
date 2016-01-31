@@ -104,7 +104,9 @@ struct PKT_PLAYER_MOVE : public PACKET_HEADER
 	{
 		nID = PLAYER_MOVE;
 		nSize = sizeof(PKT_PLAYER_MOVE);
+		memset(szName, 0, MAX_NAME_LEN);
 		eCharDirection = DIR_NONE;
 	}
+	char szName[MAX_NAME_LEN];
 	PLAYER_DIRECTION eCharDirection;
 };

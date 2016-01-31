@@ -7,6 +7,8 @@
 int main()
 {
 	boost::asio::io_service io_service;
+	int iKey = 0;
+	PLAYER_DIRECTION eDirection=DIR_NONE;
 
 	auto endpoint = boost::asio::ip::tcp::endpoint(
 		boost::asio::ip::address::from_string("127.0.0.1"),

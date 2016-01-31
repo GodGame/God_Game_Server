@@ -223,5 +223,13 @@ void ChatClient::ProcessPacket(const char*pData)
 		std::cout << pPacket->szName << ": " << pPacket->szMessage << std::endl;
 	}
 	break;
+	case PLAYER_MOVE:
+	{
+		PKT_PLAYER_MOVE* pPacket = (PKT_PLAYER_MOVE*)pData;
+		std::cout << pPacket->szName << ": " << pPacket->eCharDirection << std::endl;
+		break;
+	}
+
+
 	}
 }

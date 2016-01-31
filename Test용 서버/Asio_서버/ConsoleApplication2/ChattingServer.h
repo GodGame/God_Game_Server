@@ -108,6 +108,20 @@ public:
 			break;
 		case PLAYER_MOVE:
 		{
+			PKT_PLAYER_MOVE* pPacket = (PKT_PLAYER_MOVE*)pData;
+			PKT_PLAYER_MOVE SendPkt;
+			SendPkt.Init();
+			strncpy_s(SendPkt.szName, MAX_NAME_LEN, m_SessionList[nSessionID]->GetName(), MAX_NAME_LEN - 1);
+			SendPkt.eCharDirection = pPacket->eCharDirection;
+			size_t nTotalSessionCount = m_SessionList.size();
+
+			for (size_t i = 0; i < nTotalSessionCount; ++i)
+			{
+				if (m_SessionList[i]->Socket().is_open())
+				{
+					m_SessionList[i]->PostSend(false, SendPkt.nSize, (char*)&SendPkt);
+				}
+			}
 
 		}
 		break;

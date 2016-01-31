@@ -19,6 +19,17 @@ struct PACKET_HEADER
 	short nID;
 	short nSize;
 };
+enum PLAYER_DIRECTION
+{
+	DIR_NONE = 0x00,
+	DIR_FORWARD = 0x01,
+	DIR_BACKWARD = 0x02,
+	DIR_LEFT = 0x04,
+	DIR_RIGHT = 0x08,
+	DIR_UP = 0x10,
+	DIR_DOWN = 0x20
+};
+
 
 // ÆÐÅ¶
 
@@ -28,7 +39,7 @@ const short RES_IN = 2;
 const short REQ_CHAT = 6;
 
 const short NOTICE_CHAT = 7;
-
+const short PLAYER_MOVE = 8;
 struct PKT_REQ_IN : public PACKET_HEADER
 {
 	void Init()
@@ -75,4 +86,17 @@ struct PKT_NOTICE_CHAT : public PACKET_HEADER
 
 	char szName[MAX_NAME_LEN];
 	char szMessage[MAX_MESSAGE_LEN];
+};
+
+struct PKT_PLAYER_MOVE : public PACKET_HEADER
+{
+	void Init()
+	{
+		nID = PLAYER_MOVE;
+		nSize = sizeof(PKT_PLAYER_MOVE);
+		memset(szName, 0, MAX_NAME_LEN);
+		eCharDirection = DIR_NONE;
+	}
+	char szName[MAX_NAME_LEN];
+	PLAYER_DIRECTION eCharDirection;
 };
