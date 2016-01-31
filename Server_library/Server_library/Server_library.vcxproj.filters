@@ -22,6 +22,12 @@
     <Filter Include="소스 파일\IniFile">
       <UniqueIdentifier>{aa2368ab-630f-4d0a-ae8d-91fabcb66c35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Log">
+      <UniqueIdentifier>{cd152fee-457b-4516-bc2f-769d09401d74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CircularQueue">
+      <UniqueIdentifier>{c96bed28-11cb-487b-90a6-a009655d5c79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -41,6 +47,12 @@
     </ClInclude>
     <ClInclude Include="IniFile.h">
       <Filter>소스 파일\IniFile</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularQueue.h">
+      <Filter>소스 파일\CircularQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>소스 파일\Log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

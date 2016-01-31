@@ -89,6 +89,9 @@ BOOL CIniFile::GetValue(LPCTSTR keyName, LPCTSTR valueName, FLOAT* value)
 
 	TCHAR Value[16] = { 0, };
 
-	*value = GetPrivateProfileString(keyName, valueName, _T(""),Value,16, m_FileName);
+	 GetPrivateProfileString(keyName, valueName, _T(""),Value,16, m_FileName);
+
+	 *value = (FLOAT)_tstof(Value);
+
 	return TRUE;
 }
