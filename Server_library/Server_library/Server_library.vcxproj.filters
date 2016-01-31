@@ -31,6 +31,15 @@
     <Filter Include="소스 파일\MemoryPool">
       <UniqueIdentifier>{182da054-cb46-4964-a487-c713aad095e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Crypt">
+      <UniqueIdentifier>{1f2cb80d-86d4-4d79-a2bb-4b546a4e40d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\MiniDump">
+      <UniqueIdentifier>{88a8e08c-535a-4895-ae4f-04a4ae78cc1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ThreadSync">
+      <UniqueIdentifier>{4bc29290-a4cf-4743-aad7-54b0cdcaa354}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -60,6 +69,15 @@
     <ClInclude Include="MemoryPool.h">
       <Filter>소스 파일\MemoryPool</Filter>
     </ClInclude>
+    <ClInclude Include="Crypt.h">
+      <Filter>소스 파일\Crypt</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDump.h">
+      <Filter>소스 파일\MiniDump</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadSync.h">
+      <Filter>소스 파일\ThreadSync</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -73,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="IniFile.cpp">
       <Filter>소스 파일\IniFile</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypt.cpp">
+      <Filter>소스 파일\Crypt</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDump.cpp">
+      <Filter>소스 파일\MiniDump</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
