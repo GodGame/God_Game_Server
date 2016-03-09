@@ -58,7 +58,7 @@ void Session::PostSend( const bool bImmediately, const int nSize, char* pData )
 	{
 		return;
 	}
-
+//	std::cout << "함수 :" << __FUNCTION__ << " " << __LINE__ << "번째줄" << std::endl;
 	boost::asio::async_write( m_Socket, boost::asio::buffer( pSendData, nSize ),
 							 boost::bind( &Session::handle_write, this,
 								boost::asio::placeholders::error,

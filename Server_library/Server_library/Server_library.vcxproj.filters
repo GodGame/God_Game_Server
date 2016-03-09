@@ -40,6 +40,9 @@
     <Filter Include="소스 파일\ThreadSync">
       <UniqueIdentifier>{4bc29290-a4cf-4743-aad7-54b0cdcaa354}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\NetworkSession">
+      <UniqueIdentifier>{89fe1235-3bc3-41f1-9c36-e5778f3068ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -78,6 +81,9 @@
     <ClInclude Include="ThreadSync.h">
       <Filter>소스 파일\ThreadSync</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkSession.h">
+      <Filter>소스 파일\NetworkSession</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -97,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="MiniDump.cpp">
       <Filter>소스 파일\MiniDump</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkSession.cpp">
+      <Filter>소스 파일\NetworkSession</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

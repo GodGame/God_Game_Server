@@ -93,7 +93,7 @@ DWORD	WINAPI WorkerThread(LPVOID arg)
 		SOCKET client_sock;
 		SOCKETINFO*	ptr;
 		retval = GetQueuedCompletionStatus(hcp, &cbTransferred,
-			(LPDWORD)&client_sock, (LPOVERLAPPED*)&ptr, INFINITE);
+			(PULONG_PTR)&client_sock, (LPOVERLAPPED*)&ptr, INFINITE);
 
 
 		SOCKADDR_IN	clientaddr;

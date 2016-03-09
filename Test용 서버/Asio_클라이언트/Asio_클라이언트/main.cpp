@@ -3,6 +3,10 @@
 #include "Protocol.h"
 
 
+#define KEYDOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0) 
+
+#define KEYUP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1) 
+
 
 int main()
 {
@@ -22,17 +26,17 @@ int main()
 
 	char szInputMessage[MAX_MESSAGE_LEN * 2] = { 0, };
 
-	while (std::cin.getline(szInputMessage, MAX_MESSAGE_LEN))
-	{
-		if (strnlen_s(szInputMessage, MAX_MESSAGE_LEN) == 0)
+//	while (std::cin.getline(szInputMessage, MAX_MESSAGE_LEN))
+///	{
+	/*	if (strnlen_s(szInputMessage, MAX_MESSAGE_LEN) == 0)
 		{
 			break;
 		}
-
+*/
 		if (Cliet.IsConnecting() == false)
 		{
 			std::cout << "서버와 연결되지 않았습니다" << std::endl;
-			continue;
+		//	continue;
 		}
 
 		if (Cliet.IsLogin() == false)
@@ -51,7 +55,49 @@ int main()
 
 			Cliet.PostSend(false, SendPkt.nSize, (char*)&SendPkt);
 		}
-	}
+//	}
+		//while (true)
+		//{
+		//	if (KEYDOWN(VK_LEFT))
+		//	{
+		//		PKT_PLAYER_MOVE SendPkt;
+		//		PLAYER_DIRECTION eDirection;
+		//		SendPkt.Init();
+		//		SendPkt.eCharDirection = DIR_UP;
+		//		//memcpy_s(&SendPkt.eCharDirection, sizeof(PLAYER_DIRECTION), &eDirection, MAX_MESSAGE_LEN - 1);
+		//		Cliet.PostSend(false, SendPkt.nSize, (char*)&SendPkt);
+		//		std::cout << "Test(KEYDOWN)" << std::endl;
+		//		if (std::cin.peek() != EOF)
+		//		{
+		//			std::cin.ignore(std::numeric_limits<std::streamsize>::max());
+		//		}
+		//	}
+		//	else if (KEYUP(VK_LEFT))
+		//	{
+		//		std::cout << "Test(KEYUP)" << std::endl;
+		//		//break;
+		//		/*if (std::cin.peek() != EOF)
+		//		{
+		//			std::cin.ignore(std::numeric_limits<std::streamsize>::max());
+		//		}*/
+		//	}
+		//
+		////	rewind(stdin);
+		//	//else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		//	//{
+		//	//	PKT_PLAYER_MOVE SendPkt;
+		//	//	PLAYER_DIRECTION eDirection;
+		//	//	SendPkt.Init();
+		//	//	SendPkt.eCharDirection = DIR_LEFT;
+		//	//	//memcpy_s(&SendPkt.eCharDirection, sizeof(PLAYER_DIRECTION), &eDirection, MAX_MESSAGE_LEN - 1);
+		//	//	Cliet.PostSend(false, SendPkt.nSize, (char*)&SendPkt);
+		//	//}
+		//	//else
+		//	//{
+		//	//	continue;
+		//	//}
+
+		//}
 
 	io_service.stop();
 

@@ -1,17 +1,12 @@
-#pragma once 
-#pragma warning(disable:4996)
+#pragma once
 #include <memory.h>
-//#include <DirectXMath.h>
-#include <xnamath.h>
-
+#include "Define.h"
 const unsigned short PORT_NUMBER = 31400;
 
 const int MAX_RECEIVE_BUFFER_LEN = 512;
 
 const int MAX_NAME_LEN = 17;
 const int MAX_MESSAGE_LEN = 129;
-
-
 
 
 struct PACKET_HEADER
@@ -31,22 +26,16 @@ enum PLAYER_DIRECTION
 };
 
 
+// 패킷
 
-//  패킷
 const short REQ_IN = 1;
-// PKT_REQ_IN
-
 const short RES_IN = 2;
-// PKT_RES_IN
 
 const short REQ_CHAT = 6;
-// PKT_REQ_CHAT
 
 const short NOTICE_CHAT = 7;
-// PKT_NOTICE_CHAT
-
 const short PLAYER_MOVE = 8;
-
+const short PLAYER_POSITION = 9;
 
 struct PKT_REQ_IN : public PACKET_HEADER
 {
@@ -56,7 +45,6 @@ struct PKT_REQ_IN : public PACKET_HEADER
 		nSize = sizeof(PKT_REQ_IN);
 		memset(szName, 0, MAX_NAME_LEN);
 	}
-
 	char szName[MAX_NAME_LEN];
 };
 
@@ -68,7 +56,6 @@ struct PKT_RES_IN : public PACKET_HEADER
 		nSize = sizeof(PKT_RES_IN);
 		bIsSuccess = false;
 	}
-
 	bool bIsSuccess;
 };
 
@@ -109,4 +96,21 @@ struct PKT_PLAYER_MOVE : public PACKET_HEADER
 	}
 	char szName[MAX_NAME_LEN];
 	PLAYER_DIRECTION eCharDirection;
+};
+
+struct PKT_PLAYER_POSITION : public PACKET_HEADER
+{
+	void Init()
+	{
+		nID = PLAYER_POSITION;
+		nSize = sizeof(PKT_PLAYER_POSITION);
+		//memset(szName, 0, MAX_NAME_LEN);
+		tCharPos[0] = { 0,0,0 };
+		tCharPos[1] = { 0,0,0 };
+		iSessionID = -1;
+
+	}
+	//char szName[MAX_NAME_LEN];
+	Position3f tCharPos[2];
+	int iSessionID;
 };

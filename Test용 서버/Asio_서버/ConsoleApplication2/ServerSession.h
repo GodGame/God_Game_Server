@@ -6,7 +6,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-
+#include "Define.h"
 #include "Protocol.h"
 
 
@@ -14,9 +14,15 @@ class ChatServer;
 
 class Session
 {
+
+	Position3f m_tFirstPlayer;
+	Position3f m_tSecondPlayer;
+	//int m_iSession;
 public:
 	Session(int nSessionID, boost::asio::io_service& io_service, ChatServer* pServer);
 	~Session();
+
+
 
 	int SessionID() { return m_nSessionID; }
 
