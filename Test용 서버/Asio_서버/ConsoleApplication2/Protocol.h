@@ -104,13 +104,10 @@ struct PKT_PLAYER_POSITION : public PACKET_HEADER
 	{
 		nID = PLAYER_POSITION;
 		nSize = sizeof(PKT_PLAYER_POSITION);
-		//memset(szName, 0, MAX_NAME_LEN);
-		tCharPos[0] = { 0,0,0 };
-		tCharPos[1] = { 0,0,0 };
-		iSessionID = -1;
+		memset(tCharPos, 0, sizeof(tCharPos));
+		iSessionID = 0;
 
 	}
-	//char szName[MAX_NAME_LEN];
 	Position3f tCharPos[2];
 	int iSessionID;
 };

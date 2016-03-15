@@ -8,6 +8,7 @@ Session::Session(int nSessionID, boost::asio::io_service& io_service, ChatServer
 		, m_nSessionID( nSessionID )
 		, m_pServer( pServer )
 {
+	memset(&m_tPlayer, 0, sizeof(Position3f));
 }
 
 Session::~Session()

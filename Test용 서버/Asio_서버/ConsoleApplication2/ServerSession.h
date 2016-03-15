@@ -15,8 +15,8 @@ class ChatServer;
 class Session
 {
 
-	Position3f m_tFirstPlayer;
-	Position3f m_tSecondPlayer;
+	Position3f m_tPlayer;
+	
 	//int m_iSession;
 public:
 	Session(int nSessionID, boost::asio::io_service& io_service, ChatServer* pServer);
@@ -38,7 +38,11 @@ public:
 	void SetName(const char* pszName) { m_Name = pszName; }
 	const char* GetName()				{ return m_Name.c_str(); }
 
-
+	void SetPosition(Position3f& _tPosition) 
+	{
+		m_tPlayer = _tPosition;
+	}
+	Position3f GetPosition() { return m_tPlayer; }
 private:
 	void handle_write(const boost::system::error_code& error, size_t bytes_transferred);
 
