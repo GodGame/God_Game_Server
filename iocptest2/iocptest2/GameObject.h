@@ -16,6 +16,7 @@
 //	int animation_type;
 //	network_info overlapped_ex;
 //};
+
 class Player
 {
 public:

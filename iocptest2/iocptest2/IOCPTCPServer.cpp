@@ -13,6 +13,7 @@ CIOCPTCPServer::CIOCPTCPServer()
 	randomX = uniform_int_distribution<int>(1100, 1300);
 	randomZ = uniform_int_distribution<int>(200, 300);
 
+
 	m_fFrameTime = 0.0f;
 
 }
@@ -102,6 +103,7 @@ void CIOCPTCPServer::AcceptThread()
 		int new_id = -1;
 		for (auto i = 0; i < MAX_USER; ++i)
 		{
+			if (new_id == 2) i = 0;
 			if (_pGameObject->m_Player[i].is_connected == false)
 			{
 				new_id = i;
@@ -254,7 +256,7 @@ void CIOCPTCPServer::WorkerThread()
 			rem_player.id = key;
 			rem_player.size = sizeof(sc_packet_remove_player);
 			rem_player.type = SC_REMOVE_PLAYER;
-
+			_pGameManager->m_nConnectCount -= 1;
 			for (int i = 0; i < 10; i++)
 			{
 				if (false == _pGameObject->m_Player[i].is_connected) continue;
@@ -318,10 +320,10 @@ void CIOCPTCPServer::WorkerThread()
 			delete overlap;
 		}
 		else if (overlap->operation == OP_ROUND_TIME) {
-			global_lock.lock();
+			//global_lock.lock();
 			RoundTimer(key);
 			m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-			global_lock.unlock();
+			//global_lock.unlock();
 		}
 		else if (overlap->operation == OP_CHANGE_GAMESTATE)
 		{
@@ -391,12 +393,38 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 	//case CS_DOWN:
 	//case CS_LEFT:
 	//case CS_RIGHT:
+	case SERVER_CHEAT:
+	{
+		cs_packet_serverCheat * cheat_packet = reinterpret_cast<cs_packet_serverCheat*>(packet);
+		if (cheat_packet->mode == 0)
+		{
+			_pGameManager->m_nRoundTime += 5;
+		}
+		else if (cheat_packet->mode == 1)
+		{
+			_pGameManager->m_nRoundTime -= 5;
+		}
+		break;
+	}
 	case CS_MOVE:
 //	case CS_ANI_IDLE:
 		Process_Move_Packet(packet, id);
 		break;
 	case CS_ANI_IDLE:
+	{
+		sc_packet_Behavior behavior_packet;
+		behavior_packet.id = id;
+		behavior_packet.size = sizeof(sc_packet_Behavior);
+		behavior_packet.type = SC_ANI_IDLE;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&behavior_packet), i);
+		}
+		//SC_ANI_IDLE
 		break;
+	}
 	case CS_READY:
 
 		break;
@@ -422,6 +450,20 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		}
 		break;
 	}
+	case CS_MAGIC_CASTING:
+	{
+		sc_packet_Behavior behavior_packet;
+		behavior_packet.id = id;
+		behavior_packet.size = sizeof(sc_packet_Behavior);
+		behavior_packet.type = SC_MAGIC_CASTING;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&behavior_packet), i);
+		}
+		break;
+	}
 	case CS_ROTATION:
 	{
 		cs_packet_rotate * test_packet = reinterpret_cast<cs_packet_rotate *>(packet);
@@ -432,7 +474,8 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		rotate_packet.type = SC_ROTATION;
 		rotate_packet.cxDelta = test_packet->cxDelta;
 		rotate_packet.cyDelta = test_packet->cyDelta;
-
+		rotate_packet.LookVector = test_packet->LookVector;
+		//cout << "Player [" << id << "] LookVector x:" << test_packet->LookVector.x << " y:" << test_packet->LookVector.y << " z:" << test_packet->LookVector.z << endl;
 
 		for (int i = 0; i < 10; ++i)
 		{
@@ -583,6 +626,7 @@ void CIOCPTCPServer::SendGameState(SERVER_GAME_STATE eGamestate, int id)
 	gamestate_packet.size = sizeof(sc_packet_GameState);
 	gamestate_packet.type = SC_GAME_STATE;
 	gamestate_packet.id = id;
+	gamestate_packet.round = _pGameManager->m_nGameRound;
 	gamestate_packet.gamestate = eGamestate;
 
 	for (auto i = 0; i < 10; ++i)
@@ -692,6 +736,8 @@ void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 	pos_packet.Position = _pGameObject->m_Player[id].GetPosition();
 	pos_packet.LookVector = _pGameObject->m_Player[id].GetLookVector();
 	pos_packet.dwDirection = dwDirection;
+	if (dwDirection == 0x00)
+		pos_packet.animationType = eANI_IDLE;
 	//pos_packet.x = _pGameObject->m_Player[id].GetPosition().x;
 	//pos_packet.y = _pGameObject->m_Player[id].GetPosition().y;
 	//pos_packet.z = _pGameObject->m_Player[id].GetPosition().z;
@@ -721,38 +767,14 @@ void CIOCPTCPServer::Process_StateSet_Packet(unsigned char* packet, int id)
 
 	cout << "Player [" << id << "] LookVector x:" << my_packet->LookVector.x << " y:" << my_packet->LookVector.y << " z:" << my_packet->LookVector.z << endl;
 	cout << "Player [" << id << "] RightVector x:" << my_packet->RightVector.x << " y:" << my_packet->RightVector.y << " z:" << my_packet->RightVector.z << endl;
-	//_pGameObject->m_Player[id].= my_packet->RightVector;
-	/*XMFLOAT3 position = _pGameObject->m_Player[id].GetPosition();
-	XMFLOAT3 direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3 lookVector = _pGameObject->m_Player[id].GetLookVector();*/
-	/*_pGameObject->m_Player[id].SetPosition(my_packet->Position);
-	_pGameObject->m_Player[id].SetLookVector(my_packet->LookVector);
-	_pGameObject->m_Player[id].SetRightVector(my_packet->RightVector);*/
 
-
-	//sc_packet_pos pos_packet;
-	//pos_packet.id = id;
-	//pos_packet.size = sizeof(sc_packet_pos);
-	//pos_packet.type = SC_POS;
-	//pos_packet.x = _pGameObject->m_Player[id].GetPosition().x;
-	//pos_packet.y = _pGameObject->m_Player[id].GetPosition().y;
-	//pos_packet.z = _pGameObject->m_Player[id].GetPosition().z;
-	//pos_packet.LookVector = _pGameObject->m_Player[id].GetLookVector();
-	//pos_packet.RightVetor = _pGameObject->m_Player[id].GetRightVector();
-	//pos_packet.Shift = _pGameObject->m_Player[id].GetShift();
-
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	if (false == _pGameObject->m_Player[i].is_connected) continue;
-	//	SendPacket(reinterpret_cast<unsigned char*>(&pos_packet), i);
-	//}
 
 }
 
 void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 {
 	cs_packet_damage * my_packet = reinterpret_cast<cs_packet_damage *>(packet);
-	_pGameObject->m_Player[id].m_HP -= my_packet->damage;
+	_pGameObject->m_Player[id].m_HP = my_packet->damage;
 	cout << "Player " << id <<" Damage!!" <<" hp: "<<_pGameObject->m_Player[id].m_HP << endl;
 
 	sc_packet_playerInfo info_packet;
@@ -763,6 +785,7 @@ void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 
 	for (int i = 0; i < 10; ++i)
 	{
+		if(id == i) continue;
 		if (false == _pGameObject->m_Player[i].is_connected) continue;
 		SendPacket(reinterpret_cast<unsigned char*>(&info_packet), i);
 	}

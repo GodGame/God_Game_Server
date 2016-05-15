@@ -18,6 +18,7 @@ void CGameObject::InitPlayer(int id)
 
 }
 
+
 void CGameObject::InitPlayer()
 {
 	for (int i = 0; i < 10; ++i)
@@ -108,7 +109,7 @@ Player::Player()
 {
 
 	m_ID = -1;
-	m_HP = 100;
+	m_HP = 50;
 	is_connected = false;
 	m_animateState = SC_ANI_IDLE;
 	ZeroMemory(&m_xv3Velocity, sizeof(XMFLOAT3));
@@ -123,7 +124,7 @@ Player::Player()
 Player::Player(int id)
 {
 
-	m_HP = 100;
+	m_HP = 50;
 	is_connected = false;
 	m_animateState = SC_ANI_IDLE;
 	ZeroMemory(&m_xv3Velocity, sizeof(XMFLOAT3));

@@ -13,6 +13,7 @@ public:
 public:
 	SERVER_GAME_STATE m_eGameState;
 
+
 public:
 	void Initialize();
 public:

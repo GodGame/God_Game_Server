@@ -15,6 +15,7 @@ void CGameManager::Initialize()
 	m_nEndTime = 5;
 }
 
+
 int CGameManager::GetRoundTime()
 {
 	return m_nRoundTime;

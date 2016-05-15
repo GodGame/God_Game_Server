@@ -12,10 +12,11 @@ class CGameTimer;
 class CGameManager;
 class CIOCPTCPServer
 {
+
 	bool _bIsShutdown;
 	HANDLE _hLogicProcessCp;
 	HANDLE _hWorkCp;
-
+	
 	mutex global_lock;
 	//vector<CGameObject*> _Player;
 	CGameObject* _pGameObject;

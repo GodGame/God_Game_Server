@@ -18,6 +18,7 @@ typedef unsigned long      DWORD;
 #define OP_START_COUNT 6
 #define OP_TIME 7
 
+
 #define CS_UP    1
 #define CS_DOWN  2
 #define CS_LEFT  3
@@ -33,6 +34,8 @@ typedef unsigned long      DWORD;
 #define CS_MOVE 13
 #define CS_ROTATION 14
 #define CS_DOMINATE 15
+#define CS_MAGIC_CASTING 16
+#define SERVER_CHEAT 99
 
 #define SC_POS           1
 #define SC_PUT_PLAYER    2
@@ -47,6 +50,7 @@ typedef unsigned long      DWORD;
 #define SC_PLAYER_INFO 11
 #define SC_ROTATION 12
 #define SC_DOMINATE 13
+#define SC_MAGIC_CASTING 14
 
 #define GAMESTATE_WAIT 1
 #define GAMESTATE_START 2
@@ -87,6 +91,7 @@ struct cs_packet_rotate
 	BYTE type;
 	float cxDelta;
 	float cyDelta;
+	XMFLOAT3 LookVector;
 };
 struct cs_packet_up {
 	BYTE size;
@@ -140,6 +145,11 @@ struct cs_packet_dominate
 	BYTE size;
 	BYTE type;
 };
+struct cs_packet_Behavior
+{
+	BYTE size;
+	BYTE type;
+};
 struct cs_packet_ready {
 	BYTE size;
 	BYTE type;
@@ -187,6 +197,14 @@ struct cs_packet_move {
 	XMFLOAT3 LookDirection;
 	XMFLOAT3 Velocity;
 };
+
+struct cs_packet_serverCheat
+{
+	BYTE size;
+	BYTE type;
+	short mode;
+	short roundTime;
+};
 struct sc_packet_rotate
 {
 	BYTE size;
@@ -194,8 +212,16 @@ struct sc_packet_rotate
 	WORD id;
 	float cxDelta;
 	float cyDelta;
+	XMFLOAT3 LookVector;
 };
 struct sc_packet_dominate
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+
+};
+struct sc_packet_Behavior
 {
 	BYTE size;
 	BYTE type;
@@ -285,12 +311,16 @@ struct sc_packet_GameState
 	BYTE type;
 	BYTE id;
 	short gamestate;
+	short round;
 };
 struct sc_packet_playerInfo
 {
 	BYTE size;
 	BYTE type;
 	BYTE id;
+	short point;
+	short kill;
+	short death;
 	short HP;
 	short numberOfElement[S_ELEMENT_NUM];
 	short Item;
