@@ -320,10 +320,10 @@ void CIOCPTCPServer::WorkerThread()
 			delete overlap;
 		}
 		else if (overlap->operation == OP_ROUND_TIME) {
-			//global_lock.lock();
+	
 			RoundTimer(key);
 			m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-			//global_lock.unlock();
+			
 		}
 		else if (overlap->operation == OP_CHANGE_GAMESTATE)
 		{
@@ -386,13 +386,10 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 {
 	XMFLOAT3 tempPosition = XMFLOAT3(_pGameObject->m_Player[id].GetPosition());
 	unsigned char* packet_type = packet;
-	//	cout << packet_type[1] << endl;
+
 	switch (packet_type[1])
 	{
-	//case CS_UP:
-	//case CS_DOWN:
-	//case CS_LEFT:
-	//case CS_RIGHT:
+
 	case SERVER_CHEAT:
 	{
 		cs_packet_serverCheat * cheat_packet = reinterpret_cast<cs_packet_serverCheat*>(packet);
@@ -503,9 +500,6 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 
 void CIOCPTCPServer::RoundTimer(int id)
 {
-	//if (m_nRoundTime < ROUND_END_TIME)
-//	{
-	//if(_pGameManager->GetGameState() == STATE_READY)
 
 	switch (_pGameManager->GetGameState())
 	{
@@ -577,9 +571,7 @@ void CIOCPTCPServer::RoundTimer(int id)
 	}
 	case STATE_GAME_END:
 	{
-	//	_pGameManager->m_nGameRound = 1;
-		//_pGameManager->m_eGameState = STATE_GAME_END;
-	//	SendGameState(_pGameManager->GetGameState(), id);
+	
 		break;
 	}
 	case STATE_ROUND_CHANGE:
