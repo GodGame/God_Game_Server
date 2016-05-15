@@ -17,7 +17,7 @@ typedef unsigned long      DWORD;
 #define OP_CHANGE_GAMESTATE 5
 #define OP_START_COUNT 6
 #define OP_TIME 7
-
+#define OP_CONNECTION 8
 
 #define CS_UP    1
 #define CS_DOWN  2

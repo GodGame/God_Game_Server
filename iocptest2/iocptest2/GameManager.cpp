@@ -8,10 +8,10 @@ void CGameManager::Initialize()
 		//m_eGameState = STATE_ROUND_CHANGE;
 	//else
 		//m_eGameState = STATE_READY;
+	m_eGameState = STATE_TOTAL_NUM;
 	m_nRoundTime = LIMIT_ROUND_TIME;//0;
 	m_nReadyTime = 5;
 	m_nConnectCount = 0;
-	//m_nGameRound = 1;
 	m_nEndTime = 5;
 }
 

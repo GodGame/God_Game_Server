@@ -16,7 +16,7 @@ class CIOCPTCPServer
 	bool _bIsShutdown;
 	HANDLE _hLogicProcessCp;
 	HANDLE _hWorkCp;
-	
+	bool m_bTimerSwitch;
 	mutex global_lock;
 	//vector<CGameObject*> _Player;
 	CGameObject* _pGameObject;

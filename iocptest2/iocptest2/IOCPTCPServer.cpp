@@ -12,7 +12,7 @@ CIOCPTCPServer::CIOCPTCPServer()
 	randomEngine = default_random_engine(random_device{}());
 	randomX = uniform_int_distribution<int>(1100, 1300);
 	randomZ = uniform_int_distribution<int>(200, 300);
-
+	m_bTimerSwitch = false;
 
 	m_fFrameTime = 0.0f;
 
@@ -103,7 +103,6 @@ void CIOCPTCPServer::AcceptThread()
 		int new_id = -1;
 		for (auto i = 0; i < MAX_USER; ++i)
 		{
-			if (new_id == 2) i = 0;
 			if (_pGameObject->m_Player[i].is_connected == false)
 			{
 				new_id = i;
@@ -199,13 +198,17 @@ void CIOCPTCPServer::AcceptThread()
 
 
 
-		_pGameManager->m_nConnectCount += 1;
+		
 		//if(new_id == 0)
-		if (_pGameManager->GetConnectPlayerNum() == 2)
-		{
+		//if (_pGameManager->GetConnectPlayerNum() == 2)
+		//{
+			OVERLAPPED_EX event_over;
+			event_over.operation = OP_CONNECTION;
+			PostQueuedCompletionStatus(_hIOCP, 1, new_id,
+				reinterpret_cast<LPOVERLAPPED>(&event_over));
 			_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
-			m_TimeEvent.AddTimer(new_id, EVENT_ROUND_TIMER, 1000);
-		}
+		//	m_TimeEvent.AddTimer(new_id, EVENT_ROUND_TIMER, 1000);
+		//}
 
 		DWORD flags = 0;
 		int result = WSARecv(new_socket,
@@ -322,16 +325,36 @@ void CIOCPTCPServer::WorkerThread()
 		else if (overlap->operation == OP_ROUND_TIME) {
 	
 			RoundTimer(key);
-			m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+			if(true == m_bTimerSwitch)
+				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
 			
 		}
 		else if (overlap->operation == OP_CHANGE_GAMESTATE)
 		{
 
 		}
+		else if (overlap->operation == OP_CONNECTION)
+		{
+			_pGameManager->m_nConnectCount += 1;
+			if (_pGameManager->m_nConnectCount == 2)
+			{
+				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+				_pGameManager->m_eGameState = STATE_READY;
+				m_bTimerSwitch = true;
+			}
+		}
 		else if (overlap->operation == OP_TIME)
 		{
-			
+			if (false == m_bTimerSwitch)
+			{
+				m_bTimerSwitch = true;
+				cout << "timerswitch true" << endl;
+			}
+			else if (true == m_bTimerSwitch)
+			{
+				m_bTimerSwitch = false;
+				cout << "timerswitch false" << endl;
+			}
 		}
 		else
 		{
@@ -571,7 +594,13 @@ void CIOCPTCPServer::RoundTimer(int id)
 	}
 	case STATE_GAME_END:
 	{
-	
+		_pGameManager->Initialize();
+		_pGameManager->m_nGameRound = 1;
+		OVERLAPPED_EX event_over;
+		event_over.operation = OP_TIME;
+		PostQueuedCompletionStatus(_hIOCP, 1, 999,
+			reinterpret_cast<LPOVERLAPPED>(&event_over));
+
 		break;
 	}
 	case STATE_ROUND_CHANGE:
