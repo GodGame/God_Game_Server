@@ -20,6 +20,7 @@ enum QueuedOperation {
 	OP_TIME,
 	OP_CONNECTION,
 	OP_READY,
+	OP_DEATHMATCH,
 	OP_OPERATION_NUM
 };
 #if 0
@@ -135,6 +136,7 @@ enum SERVER_GAME_STATE
 	STATE_ROUND_END,
 	STATE_ROUND_CLEAR,
 	STATE_GAME_END,
+	STATE_DEATH_MATCH,
 	STATE_TOTAL_NUM
 };
 #pragma pack (push, 1)
@@ -306,6 +308,13 @@ struct sc_packet_put_player {
 	WORD z;
 	short HP;
 	short numberOfElement[S_ELEMENT_NUM];
+};
+struct sc_packet_Deathmatch
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+	bool bDeathMatch;
 };
 //struct sc_packet_Init_player {
 //	BYTE size;

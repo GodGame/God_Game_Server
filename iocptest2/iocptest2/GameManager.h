@@ -10,6 +10,7 @@ public:
 	int m_nGameRound;
 	int m_nEndTime;
 	int m_nDominatePlayer;
+	bool m_bIsDeathMatch;
 public:
 	SERVER_GAME_STATE m_eGameState;
 

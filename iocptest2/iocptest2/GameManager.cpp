@@ -13,6 +13,7 @@ void CGameManager::Initialize()
 	m_nReadyTime = 5;
 	m_nConnectCount = 0;
 	m_nEndTime = 5;
+	m_bIsDeathMatch = false;
 }
 
 

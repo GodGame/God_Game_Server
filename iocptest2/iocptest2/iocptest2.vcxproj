@@ -146,6 +146,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IOCPTCPServer.cpp" />
     <ClCompile Include="ErrorHandle.cpp" />
+    <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="TimeEvent.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IOCPTCPServer.h" />
+    <ClInclude Include="Lobby.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ErrorHandle.h" />

@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "TimeEvent.h"
 #include "GameManager.h"
+#include "Lobby.h"
 
 CIOCPTCPServer::CIOCPTCPServer()
 {
@@ -127,12 +128,11 @@ void CIOCPTCPServer::AcceptThread()
 		_pGameObject->m_Player[new_id].is_connected = true;
 		_pGameObject->m_Player[new_id].m_ID = new_id;
 	
-		if(new_id == 0)
-			_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(1024, 300, 320));
-		else
+		for (int i = 0; i < 5; i++)
 		{
-			_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(1000, 300, 320));
+			_pGameObject->m_Player[i].SetPosition(XMFLOAT3(1000+(rand()%100), 300, 320));
 		}
+
 		_pGameObject->m_Player[new_id].m_overlapped_ex.operation = (int)(QueuedOperation::OP_RECV);
 		_pGameObject->m_Player[new_id].m_overlapped_ex.packet_size = 0;
 		_pGameObject->m_Player[new_id].previous_data_size = 0;
@@ -680,6 +680,11 @@ void CIOCPTCPServer::RoundTimer(int id)
 		_pGameManager->m_eGameState = STATE_READY;
 
 		SendGameState(_pGameManager->GetGameState(), id);
+		break;
+	}
+	case STATE_DEATH_MATCH:
+	{
+
 		break;
 	}
 	case STATE_TOTAL_NUM:

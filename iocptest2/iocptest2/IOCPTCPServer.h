@@ -5,6 +5,7 @@
 #include "Timer.h"
 #include "enum.h"
 #include "TimeEvent.h"
+#include "Lobby.h"
 
 #define ROUND_END_TIME 100
 class CGameObject;
