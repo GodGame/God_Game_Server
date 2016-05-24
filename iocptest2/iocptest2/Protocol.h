@@ -10,6 +10,19 @@ typedef unsigned long      DWORD;
 #define MAX_PACKET_SIZE  255
 #define MAX_USER 10
 
+enum QueuedOperation {
+	OP_RECV =1,
+	OP_SEND,
+	OP_OBJECT,
+	OP_ROUND_TIME,
+	OP_CHANGE_GAMESTATE,
+	OP_START_COUNT,
+	OP_TIME,
+	OP_CONNECTION,
+	OP_READY,
+	OP_OPERATION_NUM
+};
+#if 0
 #define OP_RECV 1
 #define OP_SEND 2
 #define OP_OBJECT 3
@@ -18,7 +31,46 @@ typedef unsigned long      DWORD;
 #define OP_START_COUNT 6
 #define OP_TIME 7
 #define OP_CONNECTION 8
-
+#define OP_READY 9
+#endif
+enum ServerToClient {
+	SC_POS =1,
+	SC_PUT_PLAYER,
+	SC_REMOVE_PLAYER,
+	SC_CHAT,
+	SC_ANI_IDLE,
+	SC_ANI_MAGIC_CAST1,
+	SC_ANI_MAGIC_CAST2,
+	SC_OBJECT_INIT,
+	SC_ROUND_TIME,
+	SC_GAME_STATE,
+	SC_PLAYER_INFO,
+	SC_ROTATION,
+	SC_DOMINATE,
+	SC_MAGIC_CASTING,
+	SC_TOTAL_NUM
+};
+enum ClientToServer {
+	CS_UP =1,
+	CS_DOWN,
+	CS_LEFT,
+	CS_RIGHT,
+	CS_CHAT,
+	CS_ANI_IDLE,
+	CS_ANI_MAGIC_CAST1,
+	CS_ANI_MAGIC_CAST2,
+	CS_HEIGHT,
+	CS_READY,
+	CS_INPUT,
+	CS_CHAR_DAMAGE,
+	CS_MOVE,
+	CS_ROTATION,
+	CS_DOMINATE,
+	CS_MAGIC_CASTING,
+	SERVER_CHEAT,
+	CS_TOTAL_NUM
+};
+#if 0
 #define CS_UP    1
 #define CS_DOWN  2
 #define CS_LEFT  3
@@ -51,6 +103,7 @@ typedef unsigned long      DWORD;
 #define SC_ROTATION 12
 #define SC_DOMINATE 13
 #define SC_MAGIC_CASTING 14
+#endif
 
 #define GAMESTATE_WAIT 1
 #define GAMESTATE_START 2

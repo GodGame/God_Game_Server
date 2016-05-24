@@ -8,20 +8,12 @@
 #define DIR_RIGHT	0x08
 #define DIR_UP		0x10
 #define DIR_DOWN	0x20
-//struct player {
-//	bool in_use;
-//	float x;
-//	float y;
-//	float z;
-//	int animation_type;
-//	network_info overlapped_ex;
-//};
 
 class Player
 {
 public:
 	int m_ID;				// 현재 접속한 클라이언트의 ID
-//	bool m_bIsIn_use;		// 현재 사용중인가
+	bool m_bISReady;		// 현재 준비를 하였는가?
 	int m_HP;				// 플레이어의 HP
 	short m_Elements[S_ELEMENT_NUM];
 	int m_animateState;		// 애니매이션 상태
@@ -29,7 +21,6 @@ public:
 	bool is_connected;
 	XMFLOAT3 m_Position;
 	XMFLOAT3 m_xv3Velocity;	// 플레이어의 이동 속도
-	//XMFLOAT3 Position;
 	XMFLOAT3 m_LookVector;
 	XMFLOAT3 m_RightVetor;
 	XMFLOAT3 m_xv3Shift;

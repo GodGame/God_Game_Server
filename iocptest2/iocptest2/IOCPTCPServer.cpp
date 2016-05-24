@@ -39,12 +39,12 @@ void CIOCPTCPServer::InitServer()
 	MAPMgr.Build((L"../Assets/Image/Terrain/HeightMap.raw"), ImageWidth + 1, ImageLength + 1, ImageWidth + 1, ImageLength + 1, xv3Scale);
 	cout << "HeightMap Load Complete" << endl;
 	WSADATA wsadata;
-	//	_wsetlocale(LC_ALL, L"korean");
+
 	WSAStartup(MAKEWORD(2, 2), &wsadata);
 	cout << "1" << endl;
 	_pGameObject = new CGameObject();
 	_pGameManager = &CGameManager::GetInstance();
-	//	_pTimer = &CGameTimer::GetInstance();
+
 	for (int i = 0; i < 1000; i++)
 	{
 		int z = randomZ(randomEngine);
@@ -126,39 +126,22 @@ void CIOCPTCPServer::AcceptThread()
 		_pGameObject->m_Player[new_id].m_sock = new_socket;
 		_pGameObject->m_Player[new_id].is_connected = true;
 		_pGameObject->m_Player[new_id].m_ID = new_id;
-		//_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(1300, MAPMgr.GetHeight(1300, 255, true), 255));
-		//_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(MAPMgr.GetWidth()*0.5f, 100, 500+(rand()%40 -20)));
+	
 		if(new_id == 0)
 			_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(1024, 300, 320));
 		else
 		{
 			_pGameObject->m_Player[new_id].SetPosition(XMFLOAT3(1000, 300, 320));
 		}
-		_pGameObject->m_Player[new_id].m_overlapped_ex.operation = OP_RECV;
+		_pGameObject->m_Player[new_id].m_overlapped_ex.operation = (int)(QueuedOperation::OP_RECV);
 		_pGameObject->m_Player[new_id].m_overlapped_ex.packet_size = 0;
 		_pGameObject->m_Player[new_id].previous_data_size = 0;
-
-
-		//sc_packet_Init_player init_packet;
-
-		//init_packet.id = new_id;
-		//init_packet.size = sizeof(init_packet);
-		//init_packet.type = SC_OBJECT_INIT;
-		//init_packet.x = _pGameObject->m_Player[new_id].GetPosition().x;
-		//init_packet.y = _pGameObject->m_Player[new_id].GetPosition().y;
-		//init_packet.z = _pGameObject->m_Player[new_id].GetPosition().z;
-
-		//for (auto i = 0; i < 10; i++)
-		//{
-		//	if (true == _pGameObject->m_Player[i].is_connected)
-		//		SendPacket(reinterpret_cast<unsigned char*>(&init_packet), i);
-		//}
 
 
 		sc_packet_put_player put_player_packet;
 		put_player_packet.id = new_id;
 		put_player_packet.size = sizeof(put_player_packet);
-		put_player_packet.type = SC_PUT_PLAYER;
+		put_player_packet.type = (int)(ServerToClient::SC_PUT_PLAYER);
 		put_player_packet.x = _pGameObject->m_Player[new_id].GetPosition().x;
 		put_player_packet.y = _pGameObject->m_Player[new_id].GetPosition().y;
 		put_player_packet.z = _pGameObject->m_Player[new_id].GetPosition().z;
@@ -185,7 +168,7 @@ void CIOCPTCPServer::AcceptThread()
 		//////////////////////////////////////////////////////////////////////////
 		sc_packet_GameState gamestate_packet;
 		gamestate_packet.size = sizeof(sc_packet_GameState);
-		gamestate_packet.type = SC_GAME_STATE;
+		gamestate_packet.type = (int)ServerToClient::SC_GAME_STATE;
 		gamestate_packet.id = new_id;
 		gamestate_packet.gamestate = STATE_TOTAL_NUM;
 
@@ -196,19 +179,11 @@ void CIOCPTCPServer::AcceptThread()
 		}
 		//////////////////////////////////////////////////////////////////////////
 
-
-
-		
-		//if(new_id == 0)
-		//if (_pGameManager->GetConnectPlayerNum() == 2)
-		//{
 			OVERLAPPED_EX event_over;
-			event_over.operation = OP_CONNECTION;
+			event_over.operation = (int)QueuedOperation::OP_CONNECTION;
 			PostQueuedCompletionStatus(_hIOCP, 1, new_id,
 				reinterpret_cast<LPOVERLAPPED>(&event_over));
 			_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
-		//	m_TimeEvent.AddTimer(new_id, EVENT_ROUND_TIMER, 1000);
-		//}
 
 		DWORD flags = 0;
 		int result = WSARecv(new_socket,
@@ -223,7 +198,6 @@ void CIOCPTCPServer::AcceptThread()
 			if (WSA_IO_PENDING != error_no)
 			{
 				error_display(__FUNCTION__ "Accept Thread: WSARecv", error_no);
-				//	cout << __FUNCTION__ "Accept Thread: WSARecv" << endl;;
 
 			}
 		}
@@ -239,10 +213,6 @@ void CIOCPTCPServer::WorkerThread()
 	bool result;
 
 
-	/*unsigned long IOSize;
-	unsigned long long key;
-	network_info* over_ex;
-	PULONG_PTR;*/
 	while (true)
 	{
 		result = GetQueuedCompletionStatus(_hIOCP, &io_size, reinterpret_cast<PULONG_PTR>(&key),
@@ -258,7 +228,7 @@ void CIOCPTCPServer::WorkerThread()
 			sc_packet_remove_player rem_player;
 			rem_player.id = key;
 			rem_player.size = sizeof(sc_packet_remove_player);
-			rem_player.type = SC_REMOVE_PLAYER;
+			rem_player.type = (int)ServerToClient::SC_REMOVE_PLAYER;
 			_pGameManager->m_nConnectCount -= 1;
 			for (int i = 0; i < 10; i++)
 			{
@@ -273,8 +243,9 @@ void CIOCPTCPServer::WorkerThread()
 			cout << "Client [" << key << "] Disconnected" << endl;
 			continue;
 		}
-
-		if (OP_RECV == overlap->operation)
+		switch (overlap->operation)
+		{
+		case OP_RECV:
 		{
 			unsigned char* buf_ptr = overlap->socket_buf;
 			int remain = io_size;
@@ -317,33 +288,36 @@ void CIOCPTCPServer::WorkerThread()
 				1, NULL, &flags,
 				reinterpret_cast<LPWSAOVERLAPPED>(&_pGameObject->m_Player[key].m_overlapped_ex),
 				NULL);
+			break;
 		}
-		else if (OP_SEND == overlap->operation)
+		case OP_SEND:
 		{
 			delete overlap;
+			break;
 		}
-		else if (overlap->operation == OP_ROUND_TIME) {
-	
-			RoundTimer(key);
-			if(true == m_bTimerSwitch)
-				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-			
-		}
-		else if (overlap->operation == OP_CHANGE_GAMESTATE)
+		case OP_OBJECT:
 		{
 
+			break;
 		}
-		else if (overlap->operation == OP_CONNECTION)
+		case OP_ROUND_TIME:
 		{
-			_pGameManager->m_nConnectCount += 1;
-			if (_pGameManager->m_nConnectCount == 2)
-			{
+			RoundTimer(key);
+			if (true == m_bTimerSwitch)
 				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-				_pGameManager->m_eGameState = STATE_READY;
-				m_bTimerSwitch = true;
-			}
+			break;
 		}
-		else if (overlap->operation == OP_TIME)
+		case OP_CHANGE_GAMESTATE:
+		{
+
+			break;
+		}
+		case OP_START_COUNT:
+		{
+
+			break;
+		}
+		case OP_TIME:
 		{
 			if (false == m_bTimerSwitch)
 			{
@@ -355,12 +329,116 @@ void CIOCPTCPServer::WorkerThread()
 				m_bTimerSwitch = false;
 				cout << "timerswitch false" << endl;
 			}
+			break;
 		}
-		else
+		case OP_CONNECTION:
 		{
-			cout << "Unknown Event on worker_thread" << endl;
-			while (true);
+			_pGameManager->m_nConnectCount += 1;
+			if (_pGameManager->m_nConnectCount == 2)
+			{
+				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+				_pGameManager->m_eGameState = STATE_READY;
+				m_bTimerSwitch = true;
+			}
+			break;
 		}
+		case OP_READY:
+		{
+			break;
+		}
+		default:
+			cout << "Unknown Event on worker_thread" << endl;
+			break;
+		}
+
+
+		//if (QueuedOperation::OP_RECV == overlap->operation)
+		//{
+		//	unsigned char* buf_ptr = overlap->socket_buf;
+		//	int remain = io_size;
+
+		//	while (0 < remain)
+		//	{
+		//		if (0 == _pGameObject->m_Player[key].m_overlapped_ex.packet_size)
+		//		{
+		//			_pGameObject->m_Player[key].m_overlapped_ex.packet_size = buf_ptr[0];
+		//		}
+		//		int required = _pGameObject->m_Player[key].m_overlapped_ex.packet_size
+		//			- _pGameObject->m_Player[key].previous_data_size;
+
+		//		if (required <= remain)
+		//		{
+		//			memcpy(_pGameObject->m_Player[key].packetBuf + _pGameObject->m_Player[key].previous_data_size,
+		//				buf_ptr,
+		//				required);
+
+		//			ProcessPacket(_pGameObject->m_Player[key].packetBuf, key);
+		//			//	ProcessPacket(key, clients[key].packet);
+		//			remain -= required;
+		//			buf_ptr += required;
+		//			_pGameObject->m_Player[key].m_overlapped_ex.packet_size = 0;
+		//			_pGameObject->m_Player[key].previous_data_size = 0;
+
+		//		}
+		//		else
+		//		{
+		//			memcpy(_pGameObject->m_Player[key].packetBuf + _pGameObject->m_Player[key].previous_data_size,
+		//				buf_ptr, remain);
+		//			_pGameObject->m_Player[key].previous_data_size += remain; // 미완성 데이터 증가.
+		//			remain = 0;
+		//			buf_ptr += remain;
+		//		}
+
+		//	}
+		//	DWORD flags = 0;
+		//	WSARecv(_pGameObject->m_Player[key].m_sock, &_pGameObject->m_Player[key].m_overlapped_ex.wsabuf,
+		//		1, NULL, &flags,
+		//		reinterpret_cast<LPWSAOVERLAPPED>(&_pGameObject->m_Player[key].m_overlapped_ex),
+		//		NULL);
+		//}
+		//else if (OP_SEND == overlap->operation)
+		//{
+		//	delete overlap;
+		//}
+		//else if (overlap->operation == OP_ROUND_TIME) {
+	
+		//	RoundTimer(key);
+		//	if(true == m_bTimerSwitch)
+		//		m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+		//	
+		//}
+		//else if (overlap->operation == OP_CHANGE_GAMESTATE)
+		//{
+
+		//}
+		//else if (overlap->operation == OP_CONNECTION)
+		//{
+		//	_pGameManager->m_nConnectCount += 1;
+		//	if (_pGameManager->m_nConnectCount == 2)
+		//	{
+		//		m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+		//		_pGameManager->m_eGameState = STATE_READY;
+		//		m_bTimerSwitch = true;
+		//	}
+		//}
+		//else if (overlap->operation == OP_TIME)
+		//{
+		//	if (false == m_bTimerSwitch)
+		//	{
+		//		m_bTimerSwitch = true;
+		//		cout << "timerswitch true" << endl;
+		//	}
+		//	else if (true == m_bTimerSwitch)
+		//	{
+		//		m_bTimerSwitch = false;
+		//		cout << "timerswitch false" << endl;
+		//	}
+		//}
+		//else
+		//{
+		//	cout << "Unknown Event on worker_thread" << endl;
+		//	while (true);
+		//}
 
 	}
 }
@@ -384,7 +462,7 @@ void CIOCPTCPServer::SendPacket(unsigned char*  packet, int id)
 {
 	OVERLAPPED_EX *send_over = new OVERLAPPED_EX;
 	memset(send_over, 0, sizeof(OVERLAPPED_EX));
-	send_over->operation = OP_SEND;
+	send_over->operation = (int)QueuedOperation::OP_SEND;
 	send_over->wsabuf.buf = reinterpret_cast<CHAR*>(send_over->socket_buf);
 	send_over->wsabuf.len = packet[0];
 	memcpy(send_over->socket_buf, packet, packet[0]);
@@ -398,10 +476,9 @@ void CIOCPTCPServer::SendPacket(unsigned char*  packet, int id)
 		if (WSA_IO_PENDING != error_no)
 		{
 			error_display(__FUNCTION__ "SendPacket:WSASend", error_no);
-			//	cout << __FUNCTION__ "SendPacket:WSASend" << endl;;
+		
 		}
-		//	error_display("SendPacket:WSASend", error_no);
-		//while (true);
+
 	}
 }
 
@@ -435,7 +512,7 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		sc_packet_Behavior behavior_packet;
 		behavior_packet.id = id;
 		behavior_packet.size = sizeof(sc_packet_Behavior);
-		behavior_packet.type = SC_ANI_IDLE;
+		behavior_packet.type = (int)ServerToClient::SC_ANI_IDLE;
 
 		for (int i = 0; i < 10; ++i)
 		{
@@ -457,11 +534,11 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		break;
 	case CS_DOMINATE:
 	{
-		//cs_packet_dominate* dominate_packet = reinterpret_cast<cs_packet_dominate*>(packet);
+
 		sc_packet_dominate dominate_packet;
 		dominate_packet.id = id;
 		dominate_packet.size = sizeof(sc_packet_dominate);
-		dominate_packet.type = SC_DOMINATE;
+		dominate_packet.type = (int)ServerToClient::SC_DOMINATE;
 
 		for (int i = 0; i < 10; ++i)
 		{
@@ -475,7 +552,7 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		sc_packet_Behavior behavior_packet;
 		behavior_packet.id = id;
 		behavior_packet.size = sizeof(sc_packet_Behavior);
-		behavior_packet.type = SC_MAGIC_CASTING;
+		behavior_packet.type = (int)ServerToClient::SC_MAGIC_CASTING;
 
 		for (int i = 0; i < 10; ++i)
 		{
@@ -491,11 +568,11 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		sc_packet_rotate rotate_packet;
 		rotate_packet.id = id;
 		rotate_packet.size = sizeof(sc_packet_rotate);
-		rotate_packet.type = SC_ROTATION;
+		rotate_packet.type = (int)ServerToClient::SC_ROTATION;
 		rotate_packet.cxDelta = test_packet->cxDelta;
 		rotate_packet.cyDelta = test_packet->cyDelta;
 		rotate_packet.LookVector = test_packet->LookVector;
-		//cout << "Player [" << id << "] LookVector x:" << test_packet->LookVector.x << " y:" << test_packet->LookVector.y << " z:" << test_packet->LookVector.z << endl;
+	
 
 		for (int i = 0; i < 10; ++i)
 		{
@@ -510,12 +587,6 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		exit(-1);
 		break;
 	}
-
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	if (_pGameObject->GetPlayer_ref(i).in_use == false) continue;;
-	//	SendPacket(&pos_packet, i);
-	//}
 
 
 }
@@ -629,7 +700,7 @@ void CIOCPTCPServer::SendTime(int time, int round, int id)
 {
 	sc_packet_RoundTime roundtime_packet;
 	roundtime_packet.size = sizeof(sc_packet_RoundTime);
-	roundtime_packet.type = SC_ROUND_TIME;
+	roundtime_packet.type = (int)ServerToClient::SC_ROUND_TIME;
 	roundtime_packet.id = id;
 	roundtime_packet.round = round;
 	roundtime_packet.time = time;
@@ -645,7 +716,7 @@ void CIOCPTCPServer::SendGameState(SERVER_GAME_STATE eGamestate, int id)
 
 	sc_packet_GameState gamestate_packet;
 	gamestate_packet.size = sizeof(sc_packet_GameState);
-	gamestate_packet.type = SC_GAME_STATE;
+	gamestate_packet.type = (int)ServerToClient::SC_GAME_STATE;
 	gamestate_packet.id = id;
 	gamestate_packet.round = _pGameManager->m_nGameRound;
 	gamestate_packet.gamestate = eGamestate;
@@ -661,9 +732,7 @@ void CIOCPTCPServer::SendGameState(SERVER_GAME_STATE eGamestate, int id)
 
 void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 {
-	/*float x = _pGameObject->GetPlayer_ref(id).x;
-	float y = _pGameObject->GetPlayer_ref(id).y;
-	float z = _pGameObject->GetPlayer_ref(id).z;*/
+	
 	cs_packet_move_test * test_packet = reinterpret_cast<cs_packet_move_test *>(packet);
 	XMFLOAT3 position = _pGameObject->m_Player[id].GetPosition();
 	XMFLOAT3 direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -675,100 +744,22 @@ void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 	unsigned char packet_type = packet[1];
 	DWORD dwDirection;
 	
-	//test_packet->animation;
 	sc_packet_pos pos_packet;
 	dwDirection = test_packet->direction;
 	cout << dwDirection << endl;
 	position = test_packet->Position;
 	_pGameObject->m_Player[id].SetPosition(position);
 	_pGameObject->m_Player[id].SetLookVector(test_packet->LookVector);
-	//_pGameObject->m_Player[id].Move(dwDirection, 50.0f*0.002, false);
-	//switch (packet_type)
-	//{
-	//case CS_MOVE:
-	//{
-	// dwDirection = test_packet->direction;
-	//	cout << dwDirection << endl;
-	//	position = test_packet->Position;
-	//	_pGameObject->m_Player[id].Move(dwDirection, 50.0f*0.002, false);
-	//	break;
-
-	//}
-	///*case CS_UP:
-	//	_pGameObject->m_Player[id].Move(DIR_FORWARD, 50.0f*0.002, false);
-	//	pos_packet.animationType = eANI_RUN_FORWARD;
-	//	break;
-	//case CS_DOWN:
-	//	_pGameObject->m_Player[id].Move(DIR_BACKWARD, 50.0f*0.002, false);
-	//	pos_packet.animationType = eANI_WALK_BACK;
-	//	break;
-	//case CS_LEFT:
-	//	_pGameObject->m_Player[id].Move(DIR_LEFT, 50.0f*0.002, false);
-	//	pos_packet.animationType = eANI_WALK_LEFT;
-	//	break;
-	//case CS_RIGHT:
-	//	_pGameObject->m_Player[id].Move(DIR_RIGHT, 50.0f*0.002, false);
-	//	pos_packet.animationType = eANI_WALK_RIGHT;
-	//	break;*/
-	////case DIR_UP:
-	////	xv3Shift += XMLoadFloat3(&_pGameObject->m_Player[id].GetLookVector()) * (50.0f * 0.002) * 1.2f;
-	////	//	if (tempPosition.z <= 0)
-	////	//		break;
-	////	//	tempPosition.z -=0.5f;
-	////	pos_packet.animationType = eANI_RUN_FORWARD;
-	////	break;
-	////case DIR_DOWN:
-	////	//cout << m_fFrameTime << endl;
-	////	xv3Shift -= XMLoadFloat3(&_pGameObject->m_Player[id].GetLookVector()) * (50.0f *0.002) * 0.8f;
-	////	//	tempPosition.z +=0.5f;
-	////	pos_packet.animationType = eANI_WALK_BACK;
-	////	break;
-	////case DIR_RIGHT:
-	////	xv3Shift += XMLoadFloat3(&_pGameObject->m_Player[id].GetRightVector()) * (50.0f * 0.002) * 0.8f;
-	////	/*	if (tempPosition.x <= 0)
-	////			break;
-	////		tempPosition.x -= 0.5f;*/
-	////	pos_packet.animationType = eANI_WALK_RIGHT;
-	////	break;
-	////case DIR_LEFT:
-	////	xv3Shift -= XMLoadFloat3(&_pGameObject->m_Player[id].GetRightVector()) * (50.0f * 0.002) * 0.8f;
-	////	/*	tempPosition.x += 0.5f;*/
-	////	pos_packet.animationType = eANI_WALK_LEFT;
-	////	break;
-	//case CS_ANI_IDLE:
-	//	pos_packet.animationType = eANI_IDLE;
-	//	break;
-	//default:
-	//	cout << "Unkwon Packet Type" << endl;
-	//	exit(-1);
-	//	break;
-	//}
-
-	///tempPosition = XMFLOAT3(tempPosition.x, MAPMgr.GetHeight(tempPosition.x, tempPosition.z, !(((int)tempPosition.z) % 2)), tempPosition.z);
-	//_pGameObject->m_Player[id].SetPosition(tempPosition);
-	//cout << "id: " << id << endl;
-	/*_pGameObject->GetPlayer_ref(id).x = x;
-	_pGameObject->GetPlayer_ref(id).y = y;
-	_pGameObject->GetPlayer_ref(id).z = z;*/
 
 	pos_packet.id = id;
 	pos_packet.size = sizeof(sc_packet_pos);
-	pos_packet.type = SC_POS;
+	pos_packet.type = (int)ServerToClient::SC_POS;
 	pos_packet.Position = _pGameObject->m_Player[id].GetPosition();
 	pos_packet.LookVector = _pGameObject->m_Player[id].GetLookVector();
 	pos_packet.dwDirection = dwDirection;
 	if (dwDirection == 0x00)
 		pos_packet.animationType = eANI_IDLE;
-	//pos_packet.x = _pGameObject->m_Player[id].GetPosition().x;
-	//pos_packet.y = _pGameObject->m_Player[id].GetPosition().y;
-	//pos_packet.z = _pGameObject->m_Player[id].GetPosition().z;
-	//pos_packet.LookVector = _pGameObject->m_Player[id].GetLookVector();
-	//pos_packet.RightVetor = _pGameObject->m_Player[id].GetRightVector();
-	//pos_packet.Shift = xmf3Shift;
-	//XMStoreFloat3(&pos_packet.Shift, xv3Shift);
-	//pos_packet.Shift = xmf3Shift;
-	//pos_packet.LookVector
-	//cout << id << endl;
+
 	for (int i = 0; i < 10; ++i)
 	{
 		if (i == id) continue;
@@ -779,8 +770,7 @@ void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 
 void CIOCPTCPServer::Process_StateSet_Packet(unsigned char* packet, int id)
 {
-	//XMVECTOR xv3Shift = XMVectorReplicate(0);
-	//char* tempbuf = reinterpret_cast<CHAR*>(packet);
+
 	cs_packet_state * my_packet = reinterpret_cast<cs_packet_state *>(packet);
 
 	_pGameObject->m_Player[id].m_LookVector = my_packet->LookVector;
@@ -795,14 +785,15 @@ void CIOCPTCPServer::Process_StateSet_Packet(unsigned char* packet, int id)
 void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 {
 	cs_packet_damage * my_packet = reinterpret_cast<cs_packet_damage *>(packet);
-	_pGameObject->m_Player[id].m_HP = my_packet->damage;
-	cout << "Player " << id <<" Damage!!" <<" hp: "<<_pGameObject->m_Player[id].m_HP << endl;
-
+	global_lock.lock();
+	_pGameObject->m_Player[my_packet->id].m_HP -= my_packet->damage;
+		cout << "Player " << id <<" Damage!!" <<" hp: "<<_pGameObject->m_Player[my_packet->id].m_HP << endl;
+		global_lock.unlock();
 	sc_packet_playerInfo info_packet;
-	info_packet.HP = _pGameObject->m_Player[id].m_HP;
-	info_packet.id = id;
+	info_packet.HP = _pGameObject->m_Player[my_packet->id].m_HP;
+	info_packet.id = my_packet->id;
 	info_packet.size = sizeof(sc_packet_playerInfo);
-	info_packet.type = SC_PLAYER_INFO;
+	info_packet.type = (int)ServerToClient::SC_PLAYER_INFO;
 
 	for (int i = 0; i < 10; ++i)
 	{
@@ -810,7 +801,7 @@ void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 		if (false == _pGameObject->m_Player[i].is_connected) continue;
 		SendPacket(reinterpret_cast<unsigned char*>(&info_packet), i);
 	}
-	//my_packet->damage
+
 }
 
 void CIOCPTCPServer::error_display(char * msg, int err_no)
@@ -865,8 +856,7 @@ void CIOCPTCPServer::Process_Event(event_type curr_event)
 		event_over.operation = OP_ROUND_TIME;
 		PostQueuedCompletionStatus(_hIOCP, 1, curr_event.obj_id,
 			reinterpret_cast<LPOVERLAPPED>(&event_over));
-		//heart_beat(curr_event.obj_id);
-		//AddTimer(curr_event.obj_id, EVENT_MOVE, 1000);
+
 		break;
 	}
 	case EVENT_CHANGE_GAMESTATE:
