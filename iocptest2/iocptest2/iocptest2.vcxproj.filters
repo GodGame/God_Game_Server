@@ -31,6 +31,9 @@
     <Filter Include="소스 파일\Timer">
       <UniqueIdentifier>{72447b33-288e-4a1f-9ced-26b0d8e952fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object\AI">
+      <UniqueIdentifier>{f6fd27b5-3cde-42bb-bb8d-d302d713b0fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerMain.cpp">
@@ -59,6 +62,15 @@
     </ClCompile>
     <ClCompile Include="Lobby.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Evaluator.cpp">
+      <Filter>소스 파일\Object\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIWarrock.cpp">
+      <Filter>소스 파일\Object\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>소스 파일\Object\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +109,18 @@
     </ClInclude>
     <ClInclude Include="Lobby.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Evaluator.h">
+      <Filter>소스 파일\Object\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AIWarrock.h">
+      <Filter>소스 파일\Object\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI.h">
+      <Filter>소스 파일\Object\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>소스 파일\Object\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,19 +23,8 @@ enum QueuedOperation {
 	OP_DEATHMATCH,
 	OP_OPERATION_NUM
 };
-#if 0
-#define OP_RECV 1
-#define OP_SEND 2
-#define OP_OBJECT 3
-#define OP_ROUND_TIME 4
-#define OP_CHANGE_GAMESTATE 5
-#define OP_START_COUNT 6
-#define OP_TIME 7
-#define OP_CONNECTION 8
-#define OP_READY 9
-#endif
 enum ServerToClient {
-	SC_POS =1,
+	SC_POS = 1,
 	SC_PUT_PLAYER,
 	SC_REMOVE_PLAYER,
 	SC_CHAT,
@@ -52,7 +41,7 @@ enum ServerToClient {
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
-	CS_UP =1,
+	CS_UP = 1,
 	CS_DOWN,
 	CS_LEFT,
 	CS_RIGHT,
@@ -71,6 +60,17 @@ enum ClientToServer {
 	SERVER_CHEAT,
 	CS_TOTAL_NUM
 };
+#if 0
+#define OP_RECV 1
+#define OP_SEND 2
+#define OP_OBJECT 3
+#define OP_ROUND_TIME 4
+#define OP_CHANGE_GAMESTATE 5
+#define OP_START_COUNT 6
+#define OP_TIME 7
+#define OP_CONNECTION 8
+#define OP_READY 9
+#endif
 #if 0
 #define CS_UP    1
 #define CS_DOWN  2

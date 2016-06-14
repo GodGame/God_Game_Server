@@ -142,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
+    <ClCompile Include="AIWarrock.cpp" />
+    <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IOCPTCPServer.cpp" />
@@ -153,8 +156,12 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="AIWarrock.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="enum.h" />
+    <ClInclude Include="Evaluator.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IOCPTCPServer.h" />

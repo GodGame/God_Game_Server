@@ -115,7 +115,7 @@ Player::Player()
 	ZeroMemory(&m_xv3Velocity, sizeof(XMFLOAT3));
 	for (int i = 0; i < S_ELEMENT_NUM; ++i)
 		m_Elements[i] = 0;
-
+	m_Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_RightVetor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	m_LookVector = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
@@ -131,6 +131,7 @@ Player::Player(int id)
 	ZeroMemory(&m_overlapped_ex, sizeof(OVERLAPPED_EX));
 	for (int i = 0; i < S_ELEMENT_NUM; ++i)
 		m_Elements[i] = 0;
+	m_Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_RightVetor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	m_LookVector = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
@@ -175,18 +176,8 @@ void Player::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		static XMFLOAT3 xmf3Shift;
 		XMStoreFloat3(&xmf3Shift, xv3Shift);
 
-	/*	if (wdNextState != m_wdAnimateState)
-		{
-			m_wdAnimateState = wdNextState;
-			CAnimatedMesh* pAnimatedMesh = static_cast<CAnimatedMesh*>(m_ppMeshes[m_wdAnimateState]);
-
-			pAnimatedMesh->ResetIndex();
-		}*/
 		//플레이어를 현재 위치 벡터에서 xv3Shift 벡터 만큼 이동한다.
 		Move(xmf3Shift, bUpdateVelocity);
-	/*	cout << "bf : " << m_Position.x << ", " <<
-			m_Position.y << ", " <<
-			m_Position.z << endl;*/
 	}
 	else
 	{
