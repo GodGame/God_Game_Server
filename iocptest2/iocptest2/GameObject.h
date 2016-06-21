@@ -9,6 +9,22 @@
 #define DIR_UP		0x10
 #define DIR_DOWN	0x20
 
+enum MonsterType
+{
+	MONSTER_TYPE_WARROCK,
+	MONSTER_TYPE_SKELETON,
+	MONSTER_TYPE_TOTAL_NUM
+};
+enum WarrockAnimation : WORD
+{
+	WARROCK_ANI_IDLE =0,
+	WARROCK_ANI_RUN,
+	WARROCK_ANI_ROAR,
+	WARROCK_ANI_PUNCH,
+	WARROCK_ANI_SWIPING,
+	WARROCK_ANI_DEATH,
+	WARROCK_ANI_TOTAL_NUM
+};
 class Player
 {
 public:
@@ -52,6 +68,58 @@ public:
 	void Move(XMFLOAT3& xv3Shift, bool bUpdateVelocity);
 
 
+};
+class CGameObjectTest
+{
+protected:
+	XMFLOAT3 m_Position;
+	XMFLOAT3 m_LookVector;
+	XMFLOAT3 m_RightVetor;
+
+public:
+	virtual void Initialize();
+	virtual XMFLOAT3 GetPosition() { return m_Position; }
+	virtual XMFLOAT3 GetLookVector() { return m_LookVector; }
+	virtual XMFLOAT3 GetRightVector() { return m_RightVetor; }
+
+	virtual void SetPosition(XMFLOAT3 _xPosition) { m_Position = _xPosition; }
+	virtual void SetPosition(float x, float y, float z) { m_Position = XMFLOAT3(x, y, z); }
+	virtual void SetLookVector(XMFLOAT3 _xLook) { m_LookVector = _xLook; }
+	virtual void SetLookVector(float x, float y, float z) { m_LookVector = XMFLOAT3(x, y, z); }
+	virtual void SetRightVector(XMFLOAT3 _xRight) { m_RightVetor = _xRight; }
+	virtual void SetRightVector(float x, float y, float z) { m_RightVetor = XMFLOAT3(x, y, z); }
+
+	CGameObjectTest(){}
+	~CGameObjectTest(){}
+
+};
+class CMonster :
+	public CGameObjectTest
+{
+protected:
+	int m_ID;
+	//MonsterType m_eType;
+
+public:
+	//MonsterType	GetMonsterType(){ return m_eType; }
+	virtual int			GetID() { return m_ID; }
+
+	virtual void SetID(int ID) { m_ID = ID; }
+//	void SetMonsterType(MonsterType Type) { m_eType = Type; }
+	CMonster() {}
+	~CMonster() {}
+};
+class CWarrock :
+	public CMonster
+{
+	WarrockAnimation m_eAnimationState;
+
+public:
+	WarrockAnimation	GetAnimationState() { return m_eAnimationState; }
+	void				SetAnimationState(WarrockAnimation _eAniState) { m_eAnimationState = _eAniState; }
+
+	CWarrock() {}
+	~CWarrock() {}
 };
 class CGameObject
 {

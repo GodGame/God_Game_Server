@@ -8,7 +8,8 @@ typedef unsigned long      DWORD;
 
 #define MAX_BUFF_SIZE   4000
 #define MAX_PACKET_SIZE  255
-#define MAX_USER 10
+//#define MAX_USER 10
+#define MAX_USER 20000
 
 enum QueuedOperation {
 	OP_RECV =1,
@@ -21,6 +22,8 @@ enum QueuedOperation {
 	OP_CONNECTION,
 	OP_READY,
 	OP_DEATHMATCH,
+	OP_MONSTERINIT,
+	OP_PLAYERINIT,
 	OP_OPERATION_NUM
 };
 enum ServerToClient {
@@ -38,6 +41,8 @@ enum ServerToClient {
 	SC_ROTATION,
 	SC_DOMINATE,
 	SC_MAGIC_CASTING,
+	SC_MONSTERINIT,
+	SC_MONSTERPOS,
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
@@ -58,6 +63,9 @@ enum ClientToServer {
 	CS_DOMINATE,
 	CS_MAGIC_CASTING,
 	SERVER_CHEAT,
+	CS_PLAYERINIT,
+	CS_MONSTERINIT,
+	CS_MONSTERPOS,
 	CS_TOTAL_NUM
 };
 #if 0
@@ -252,6 +260,11 @@ struct cs_packet_move {
 	XMFLOAT3 LookDirection;
 	XMFLOAT3 Velocity;
 };
+struct cs_packet_objectInit
+{
+	BYTE size;
+	BYTE type;
+};
 
 struct cs_packet_serverCheat
 {
@@ -282,6 +295,13 @@ struct sc_packet_Behavior
 	BYTE type;
 	WORD id;
 
+};
+struct sc_packet_objectInit
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+	XMFLOAT3 position[5];
 };
 struct sc_packet_pos {
 	BYTE size;

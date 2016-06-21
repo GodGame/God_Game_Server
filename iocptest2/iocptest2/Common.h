@@ -9,6 +9,7 @@
 #include <random>
 #include <chrono>
 #include <queue>
+#include <atomic>
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"winmm.lib")
 

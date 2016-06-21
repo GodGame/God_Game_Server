@@ -213,3 +213,10 @@ void Player::Move(XMFLOAT3& xv3Shift, bool bUpdateVelocity)
 	}
 }
 
+void CGameObjectTest::Initialize()
+{
+	m_Position = XMFLOAT3(0, 0, 0);
+	m_LookVector = XMFLOAT3(0, 0, 0);
+	m_RightVetor = XMFLOAT3(0, 0, 0);
+}
+

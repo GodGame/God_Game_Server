@@ -82,10 +82,10 @@ float CHeightMap::GetHeight(float fx, float fz, bool bReverseQuad) const
 
 	if (bReverseQuad)
 	{
-		/*지형의 삼각형들이 오른쪽에서 왼쪽 방향으로 나열되는 경우이다. 
-		<그림 12>의 오른쪽은 (fzPercent < fxPercent)인 경우이다. 
+		/*지형의 삼각형들이 오른쪽에서 왼쪽 방향으로 나열되는 경우이다.
+		<그림 12>의 오른쪽은 (fzPercent < fxPercent)인 경우이다.
 		이 경우 TopLeft의 픽셀 값은 (fTopLeft = fTopRight + (fBottomLeft - fBottomRight))로 근사한다.
-		<그림 12>의 왼쪽은 (fzPercent ≥ fxPercent)인 경우이다. 
+		<그림 12>의 왼쪽은 (fzPercent ≥ fxPercent)인 경우이다.
 		이 경우 BottomRight의 픽셀 값은 (fBottomRight = fBottomLeft + (fTopRight - fTopLeft))로 근사한다.*/
 		if (fzPercent >= fxPercent)
 			fBottomRight = fBottomLeft + (fTopRight - fTopLeft);
@@ -138,4 +138,18 @@ void CMapManager::Build(LPCTSTR pFileName, int nWidth, int nLength, int nBlockWi
 	//지형에 사용할 높이 맵의 가로, 세로의 크기이다.
 	m_nWidth = nWidth;
 	m_nLength = nLength;
+}
+
+XMFLOAT3 CMapManager::GetRandPos()
+{
+	const int width = GetWidth() - mfDeltaWidthRange;
+	const int length = GetLength() - mfDeltaLengthRange;
+
+	XMFLOAT3 pos;
+	pos.x = (rand() % width) + mfWidthPlus;
+	pos.z = (rand() % length) + mfLengthPlus;
+	pos.y = GetHeight(pos);
+
+	//cout << "Rand : " << width << ", " << length << "-> " << pos << endl;
+	return pos;
 }

@@ -11,6 +11,7 @@
 class CGameObject;
 class CGameTimer;
 class CGameManager;
+class CGameObjectTest;
 class CIOCPTCPServer
 {
 
@@ -19,6 +20,7 @@ class CIOCPTCPServer
 	HANDLE _hWorkCp;
 	bool m_bTimerSwitch;
 	mutex global_lock;
+	atomic_int m_UserID;
 	//vector<CGameObject*> _Player;
 	CGameObject* _pGameObject;
 	CGameTimer* _pTimer;
@@ -27,6 +29,8 @@ class CIOCPTCPServer
 	default_random_engine randomEngine;
 	uniform_int_distribution<int> randomX;
 	uniform_int_distribution<int> randomZ;
+
+	CGameObjectTest* m_pGameObjectTest;
 	//float randomX;
 	//float randomY;
 
@@ -38,6 +42,7 @@ public:
 	int m_nRoundTime;
 
 public:
+	int GetNewClientID();
 	bool StartServer();
 	void InitServer();
 	void AcceptThread();
