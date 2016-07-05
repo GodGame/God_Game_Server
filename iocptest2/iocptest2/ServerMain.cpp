@@ -22,10 +22,9 @@ int main()
 
 	while (false == g_cMainServer.ServerRunCheck())
 	{
-		//if (g_cMainServer.ServerRunCheck() == false)
-			//break;
+
 		Sleep(1000);
-		//cout << g_cTimer.GetFrameRate(0) << endl;
+
 		if (GetAsyncKeyState(VK_F12) & 0x8000)
 		{
 			g_cMainServer.SetShutdown(true);
@@ -38,12 +37,7 @@ int main()
 		(*iter)->join();
 		delete (*iter);
 	}
-	//for (auto threads : vWorker_threads)
-	//{
-	//	cout << "join" << endl;
-	//	threads->join();
-	//	delete threads;
-	//}
+
 	TimerThread->join();
 	delete TimerThread;
 	AcceptThread->join();

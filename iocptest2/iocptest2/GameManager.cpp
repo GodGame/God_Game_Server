@@ -14,6 +14,27 @@ void CGameManager::Initialize()
 	m_nConnectCount = 0;
 	m_nEndTime = 5;
 	m_bIsDeathMatch = false;
+	m_nDeathMatchTime = 100;
+	m_nWaterHeight = 50.0f;
+}
+
+void CGameManager::StartDeathMatch()
+{
+	if (false == m_bIsDeathMatch)
+		m_bIsDeathMatch = true;
+	else
+	{
+		m_nDeathMatchTime -= 1;
+		m_nWaterHeight += 10.0f;
+
+	}
+	
+
+}
+
+void CGameManager::EndDeathMatch()
+{
+	m_bIsDeathMatch = false;
 }
 
 

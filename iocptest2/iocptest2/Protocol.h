@@ -43,6 +43,7 @@ enum ServerToClient {
 	SC_MAGIC_CASTING,
 	SC_MONSTERINIT,
 	SC_MONSTERPOS,
+	SC_DEATHMATCH,
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
@@ -66,6 +67,7 @@ enum ClientToServer {
 	CS_PLAYERINIT,
 	CS_MONSTERINIT,
 	CS_MONSTERPOS,
+	CS_DEATHMATCH,
 	CS_TOTAL_NUM
 };
 #if 0
@@ -334,7 +336,9 @@ struct sc_packet_Deathmatch
 	BYTE size;
 	BYTE type;
 	WORD id;
+	float fWaterHeight;
 	bool bDeathMatch;
+
 };
 //struct sc_packet_Init_player {
 //	BYTE size;

@@ -36,6 +36,7 @@ class CIOCPTCPServer
 
 public:
 	CTimeEvent m_TimeEvent;
+	CTimeEvent m_DeathMatchTimer;
 	HANDLE _hIOCP;
 
 public:
@@ -57,6 +58,7 @@ public:
 public:
 	void SendPacket(unsigned char* packet, int id);
 	void ProcessPacket(unsigned char* packet, int id);
+	void DeathMatchTimer(int id);
 public:
 	void SendGameState(SERVER_GAME_STATE eGamestate, int id);
 	void SendTime(int time, int round ,int id);

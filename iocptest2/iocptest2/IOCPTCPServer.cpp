@@ -5,6 +5,51 @@
 #include "TimeEvent.h"
 #include "GameManager.h"
 #include "Lobby.h"
+ostream& operator<<(ostream& os, POINT & pt)
+{
+	os << pt.x << ", " << pt.y;
+	return os;
+}
+
+ostream& operator<<(ostream& os, RECT & rect)
+{
+	os << rect.left << ", " << rect.bottom << " // " << rect.right << ", " << rect.top;
+	return os;
+}
+
+ostream& operator<<(ostream& os, LPRECT & rect)
+{
+	os << rect->left << ", " << rect->bottom << " // " << rect->right << rect->top;
+	return os;
+}
+
+
+ostream& operator<<(ostream& os, XMFLOAT2 & xmf2)
+{
+	os << xmf2.x << ", " << xmf2.y;
+	return os;
+}
+
+ostream& operator<<(ostream& os, XMFLOAT3 & xmf3)
+{
+	os << xmf3.x << ", " << xmf3.y << ", " << xmf3.z;
+	return os;
+}
+
+ostream & operator<<(ostream & os, XMFLOAT4 & xmf4)
+{
+	os << xmf4.x << ", " << xmf4.y << ", " << xmf4.z << ", " << xmf4.w;
+	return os;
+}
+
+ostream & operator<<(ostream & os, XMFLOAT4X4 & mtx)
+{
+	os << mtx._11 << ", " << mtx._12 << ", " << mtx._13 << ", " << mtx._14 << endl;
+	os << mtx._21 << ", " << mtx._22 << ", " << mtx._23 << ", " << mtx._24 << endl;
+	os << mtx._31 << ", " << mtx._32 << ", " << mtx._33 << ", " << mtx._34 << endl;
+	os << mtx._41 << ", " << mtx._42 << ", " << mtx._43 << ", " << mtx._44;
+	return os;
+}
 
 CIOCPTCPServer::CIOCPTCPServer()
 {
@@ -343,6 +388,14 @@ void CIOCPTCPServer::WorkerThread()
 
 			break;
 		}
+		case OP_DEATHMATCH:
+		{
+			//RoundTimer(key);
+			//if (true == m_bTimerSwitch)
+			DeathMatchTimer(key);
+			m_DeathMatchTimer.AddTimer(key, OP_DEATHMATCH, 5000); // n초마다 물 높이 상승을 위해 타이머 n초마다 지속되도록 추가
+			break;
+		}
 		case OP_TIME:
 		{
 			if (false == m_bTimerSwitch)
@@ -377,94 +430,6 @@ void CIOCPTCPServer::WorkerThread()
 			break;
 		}
 
-
-		//if (QueuedOperation::OP_RECV == overlap->operation)
-		//{
-		//	unsigned char* buf_ptr = overlap->socket_buf;
-		//	int remain = io_size;
-
-		//	while (0 < remain)
-		//	{
-		//		if (0 == _pGameObject->m_Player[key].m_overlapped_ex.packet_size)
-		//		{
-		//			_pGameObject->m_Player[key].m_overlapped_ex.packet_size = buf_ptr[0];
-		//		}
-		//		int required = _pGameObject->m_Player[key].m_overlapped_ex.packet_size
-		//			- _pGameObject->m_Player[key].previous_data_size;
-
-		//		if (required <= remain)
-		//		{
-		//			memcpy(_pGameObject->m_Player[key].packetBuf + _pGameObject->m_Player[key].previous_data_size,
-		//				buf_ptr,
-		//				required);
-
-		//			ProcessPacket(_pGameObject->m_Player[key].packetBuf, key);
-		//			//	ProcessPacket(key, clients[key].packet);
-		//			remain -= required;
-		//			buf_ptr += required;
-		//			_pGameObject->m_Player[key].m_overlapped_ex.packet_size = 0;
-		//			_pGameObject->m_Player[key].previous_data_size = 0;
-
-		//		}
-		//		else
-		//		{
-		//			memcpy(_pGameObject->m_Player[key].packetBuf + _pGameObject->m_Player[key].previous_data_size,
-		//				buf_ptr, remain);
-		//			_pGameObject->m_Player[key].previous_data_size += remain; // 미완성 데이터 증가.
-		//			remain = 0;
-		//			buf_ptr += remain;
-		//		}
-
-		//	}
-		//	DWORD flags = 0;
-		//	WSARecv(_pGameObject->m_Player[key].m_sock, &_pGameObject->m_Player[key].m_overlapped_ex.wsabuf,
-		//		1, NULL, &flags,
-		//		reinterpret_cast<LPWSAOVERLAPPED>(&_pGameObject->m_Player[key].m_overlapped_ex),
-		//		NULL);
-		//}
-		//else if (OP_SEND == overlap->operation)
-		//{
-		//	delete overlap;
-		//}
-		//else if (overlap->operation == OP_ROUND_TIME) {
-	
-		//	RoundTimer(key);
-		//	if(true == m_bTimerSwitch)
-		//		m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-		//	
-		//}
-		//else if (overlap->operation == OP_CHANGE_GAMESTATE)
-		//{
-
-		//}
-		//else if (overlap->operation == OP_CONNECTION)
-		//{
-		//	_pGameManager->m_nConnectCount += 1;
-		//	if (_pGameManager->m_nConnectCount == 2)
-		//	{
-		//		m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-		//		_pGameManager->m_eGameState = STATE_READY;
-		//		m_bTimerSwitch = true;
-		//	}
-		//}
-		//else if (overlap->operation == OP_TIME)
-		//{
-		//	if (false == m_bTimerSwitch)
-		//	{
-		//		m_bTimerSwitch = true;
-		//		cout << "timerswitch true" << endl;
-		//	}
-		//	else if (true == m_bTimerSwitch)
-		//	{
-		//		m_bTimerSwitch = false;
-		//		cout << "timerswitch false" << endl;
-		//	}
-		//}
-		//else
-		//{
-		//	cout << "Unknown Event on worker_thread" << endl;
-		//	while (true);
-		//}
 
 
 	}
@@ -656,17 +621,17 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 	}
 	case CS_MONSTERINIT:
 	{
-	/*	OVERLAPPED_EX playerover;
-		playerover.operation = (int)QueuedOperation::OP_PLAYERINIT;
-		PostQueuedCompletionStatus(_hIOCP, 1, id,
-			reinterpret_cast<LPOVERLAPPED>(&playerover));*/
+
 		cout << __FUNCTION__ "CS_MONSTERINIT" << endl;
 		sc_packet_objectInit monster_packet;
 		monster_packet.id = id;
 		monster_packet.size = sizeof(sc_packet_objectInit);
 		monster_packet.type = (int)ServerToClient::SC_MONSTERINIT;
-		for (int i=0; i<5; i++)
+		for (int i = 0; i < 5; i++)
+		{
 			monster_packet.position[i] = MAPMgr.GetRandPos();
+			cout << monster_packet.position[i] << endl;
+		}
 		//monster_packet.position = MAPMgr.GetRandPos();
 		SendPacket(reinterpret_cast<unsigned char*>(&monster_packet), id);
 		break;
@@ -677,6 +642,28 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		break;
 	}
 
+
+}
+
+void CIOCPTCPServer::DeathMatchTimer(int id)
+{
+	if (_pGameManager->GetDeathMatchTime() <= 0)
+	{
+		_pGameManager->EndDeathMatch();
+		return;
+	}
+	_pGameManager->StartDeathMatch();
+	sc_packet_Deathmatch deathmatch_packet;
+	deathmatch_packet.id = id;
+	deathmatch_packet.size = sizeof(sc_packet_Deathmatch);
+	deathmatch_packet.type = (int)ServerToClient::SC_DEATHMATCH;
+	deathmatch_packet.fWaterHeight = _pGameManager->GetWaterHeight();
+	deathmatch_packet.bDeathMatch = _pGameManager->GetDeathMatchState();
+
+	for (int user_id=0; user_id<MAX_USER; ++user_id)
+	{
+		SendPacket(reinterpret_cast<unsigned char*>(&deathmatch_packet), user_id);
+	}
 
 }
 
@@ -784,10 +771,6 @@ void CIOCPTCPServer::RoundTimer(int id)
 		break;
 	}
 
-
-
-
-	//	}
 
 }
 void CIOCPTCPServer::SendTime(int time, int round, int id)
@@ -954,11 +937,23 @@ void CIOCPTCPServer::Process_Event(event_type curr_event)
 		break;
 	}
 	case EVENT_CHANGE_GAMESTATE:
+	{
 		event_over.operation = OP_CHANGE_GAMESTATE;
 		PostQueuedCompletionStatus(_hIOCP, 1, curr_event.obj_id,
 			reinterpret_cast<LPOVERLAPPED>(&event_over));
 
 		break;
+
+	}
+	case EVENT_DEATHMATCH:
+	{
+		event_over.operation = OP_DEATHMATCH;
+		PostQueuedCompletionStatus(_hIOCP, 1, curr_event.obj_id,
+			reinterpret_cast<LPOVERLAPPED>(&event_over));
+
+		break;
+	}
+	
 	default:
 		cout << "Unknown Event Type Detected!\n";
 		exit(-1);

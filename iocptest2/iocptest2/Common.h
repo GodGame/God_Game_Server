@@ -17,3 +17,4 @@ using namespace std;
 using namespace chrono;
 using namespace DirectX;
 #define CLOCK &CGameTimer::GetInstance()
+
