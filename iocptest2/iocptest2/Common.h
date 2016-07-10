@@ -10,6 +10,8 @@
 #include <chrono>
 #include <queue>
 #include <atomic>
+#include <string>
+#include <fstream>
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"winmm.lib")
 

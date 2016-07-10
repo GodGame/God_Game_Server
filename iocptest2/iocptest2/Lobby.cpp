@@ -27,6 +27,11 @@ void CLobby::SetGameObject(CGameObject * pGameObject)
 	m_pGameObject = pGameObject;
 }
 
+void CLobby::AcceptPlayer()
+{
+	
+}
+
 CLobby::CLobby()
 {
 }

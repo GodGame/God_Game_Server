@@ -1,0 +1,7 @@
+[2016년07월10일 16시41분59초]: File: iocptcpserver.cpp Function: CIOCPTCPServer::InitServer Line: 104test
+
+[2016년07월10일 16시42분49초]: File: iocptcpserver.cpp Function: CIOCPTCPServer::InitServer Line: 104 Message:
+
+[2016년07월10일 16시43분16초]: File: iocptcpserver.cpp Function: CIOCPTCPServer::InitServer Line: 104 Message:
+[2016년07월10일 16시43분27초]: File: iocptcpserver.cpp Function: CIOCPTCPServer::InitServer Line: 104 Message:
+[2016년07월10일 16시46분16초]: File: iocptcpserver.cpp Function: CIOCPTCPServer::InitServer Line: 103 Message:test

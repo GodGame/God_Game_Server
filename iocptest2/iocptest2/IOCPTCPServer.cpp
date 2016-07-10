@@ -5,6 +5,7 @@
 #include "TimeEvent.h"
 #include "GameManager.h"
 #include "Lobby.h"
+//#include "LogMgr.h"
 ostream& operator<<(ostream& os, POINT & pt)
 {
 	os << pt.x << ", " << pt.y;
@@ -79,13 +80,14 @@ int CIOCPTCPServer::GetNewClientID()
 }
 bool CIOCPTCPServer::StartServer()
 {
-
+	
 	return false;
 
 }
 
 void CIOCPTCPServer::InitServer()
 {
+	_wsetlocale(LC_ALL, L"korean");
 	XMFLOAT3 xv3Scale(8.0f, 1.5f, 8.0f);
 	m_nRoundTime = 0;
 	const int ImageWidth = 256;
@@ -98,6 +100,9 @@ void CIOCPTCPServer::InitServer()
 	cout << "1" << endl;
 	_pGameObject = new CGameObject();
 	_pGameManager = &CGameManager::GetInstance();
+	//CLogMgr* test = &CLogMgr::GetInstance();
+	//(CLogMgr::GetInstance()).InsertLog(LOGTYPE_CONNECTION, __FILE__, __FUNCTION__, __LINE__, "test");
+	//test->InsertLog(LOGTYPE_CONNECTION, __FILE__, __FUNCTION__, __LINE__,"test");
 	//m_pGameObjectTest = new CGameObjectTest();
 	//CWarrock* pWarrock = static_cast<CWarrock*>(m_pGameObjectTest);
 
@@ -105,6 +110,7 @@ void CIOCPTCPServer::InitServer()
 	//pWarrock->SetAnimationState(WarrockAnimation::WARROCK_ANI_IDLE);
 //	delete m_pGameObjectTest;
 //	pWarrock->SetPosition()
+	
 	for (int i = 0; i < 1000; i++)
 	{
 		int z = randomZ(randomEngine);
@@ -118,6 +124,7 @@ void CIOCPTCPServer::InitServer()
 	if (_hIOCP == NULL)
 	{
 		cout << "IOCP InitError" << endl;
+	//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "test");
 	}
 }
 
@@ -141,6 +148,7 @@ void CIOCPTCPServer::AcceptThread()
 	if (SOCKET_ERROR == errorCode)
 	{
 		cout << "bind Fail" << endl;
+	//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "bind Fail");
 	}
 
 	errorCode = listen(accept_socket, 10);
@@ -178,7 +186,7 @@ void CIOCPTCPServer::AcceptThread()
 
 
 		cout << "Client Accepted" << endl;
-
+		cout << "client Id : " << new_id << endl;
 		CreateIoCompletionPort(
 			reinterpret_cast<HANDLE>(new_socket),
 			_hIOCP, new_id, 0);
@@ -256,6 +264,10 @@ void CIOCPTCPServer::AcceptThread()
 		if (0 != result)
 		{
 			int error_no = WSAGetLastError();
+			if (WSA_INVALID_HANDLE == error_no)
+			{
+				cout << "WSA_INVALID_HANDLE" << endl;
+			}
 			if (WSA_IO_PENDING != error_no)
 			{
 				error_display(__FUNCTION__ "Accept Thread: WSARecv", error_no);
@@ -634,6 +646,26 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		}
 		//monster_packet.position = MAPMgr.GetRandPos();
 		SendPacket(reinterpret_cast<unsigned char*>(&monster_packet), id);
+		break;
+	}
+	case CS_ELEMENTINIT:
+	{
+
+		cout << __FUNCTION__ "CS_ELEMENTINIT" << endl;
+		sc_packet_ElementInfo element_packet;
+		element_packet.id = id;
+		element_packet.size = sizeof(sc_packet_objectInit);
+		element_packet.type = (int)ServerToClient::SC_MONSTERINIT;
+		for (int i = 0; i < 1000; i++)
+		{
+			element_packet.elementType =(int)rand()%(ElementType::ELEMENT_TYPE_TOTAL_NUM);
+			element_packet.x = rand() % 1000;	
+			element_packet.z = rand() % 1000;
+			SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id); // 생성 즉시 보내는 방법이므로 효율적이지 못함 차후 묶어서 보내는 방법이나 순차적으로 조절해서 보내게 변경할예정
+			//cout << monster_packet.position[i] << endl;
+		}
+		//monster_packet.position = MAPMgr.GetRandPos();
+		//SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id);
 		break;
 	}
 	default:

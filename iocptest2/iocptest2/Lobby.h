@@ -12,6 +12,8 @@ public:
 	void Initialize();
 	bool IsAllPlayerReady();
 	void SetGameObject(CGameObject* pGameObject);
+
+	void AcceptPlayer();
 public:
 	CLobby();
 	~CLobby();

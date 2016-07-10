@@ -34,6 +34,12 @@
     <Filter Include="소스 파일\Object\AI">
       <UniqueIdentifier>{f6fd27b5-3cde-42bb-bb8d-d302d713b0fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{3e38e68b-f55f-4f10-820f-f0e8c1cb4307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\System">
+      <UniqueIdentifier>{d8b8a9f0-a763-4f98-910f-b785714410a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerMain.cpp">
@@ -72,6 +78,12 @@
     <ClCompile Include="Action.cpp">
       <Filter>소스 파일\Object\AI</Filter>
     </ClCompile>
+    <ClCompile Include="LogMgr.cpp">
+      <Filter>소스 파일\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ErrorHandle.h">
@@ -107,9 +119,6 @@
     <ClInclude Include="GameManager.h">
       <Filter>소스 파일\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Lobby.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Evaluator.h">
       <Filter>소스 파일\Object\AI</Filter>
     </ClInclude>
@@ -121,6 +130,15 @@
     </ClInclude>
     <ClInclude Include="Action.h">
       <Filter>소스 파일\Object\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="LogMgr.h">
+      <Filter>소스 파일\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>소스 파일\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

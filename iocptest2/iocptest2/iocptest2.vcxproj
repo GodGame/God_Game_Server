@@ -144,19 +144,24 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="AIWarrock.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Evaluator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IOCPTCPServer.cpp" />
     <ClCompile Include="ErrorHandle.cpp" />
     <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="LogMgr.cpp" />
     <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="TimeEvent.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -164,25 +169,31 @@
   <ItemGroup>
     <ClInclude Include="Action.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="AI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="AIWarrock.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Common.h" />
     <ClInclude Include="enum.h" />
     <ClInclude Include="Evaluator.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IOCPTCPServer.h" />
     <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LogMgr.h" />
     <ClInclude Include="MapManager.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="ErrorHandle.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="TimeEvent.h" />
     <ClInclude Include="Timer.h" />

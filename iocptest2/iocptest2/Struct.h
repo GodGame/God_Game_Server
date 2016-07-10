@@ -39,3 +39,7 @@ public:
 	}
 };
 
+struct LogEventType
+{
+	time_point<high_resolution_clock> time;
+};

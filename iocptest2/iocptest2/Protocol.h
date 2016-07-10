@@ -44,6 +44,8 @@ enum ServerToClient {
 	SC_MONSTERINIT,
 	SC_MONSTERPOS,
 	SC_DEATHMATCH,
+	SC_ENTER_INGAME,
+	SC_ELEMENTINIT,
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
@@ -68,6 +70,8 @@ enum ClientToServer {
 	CS_MONSTERINIT,
 	CS_MONSTERPOS,
 	CS_DEATHMATCH,
+	CS_ENTER_INGAME,
+	CS_ELEMENTINIT,
 	CS_TOTAL_NUM
 };
 #if 0
@@ -412,5 +416,13 @@ struct sc_packet_playerInfo
 	short Item;
 
 };
-
+struct sc_packet_ElementInfo
+{
+	BYTE size;
+	BYTE type;
+	BYTE id;
+	WORD x;
+	WORD z;
+	BYTE elementType;
+};
 #pragma pack (pop)
