@@ -10,9 +10,11 @@ public:
 	int m_nGameRound;
 	int m_nEndTime;
 	int m_nDominatePlayer;
-	bool m_bIsDeathMatch;
 	int m_nDeathMatchTime;
+	int m_nStageNum;
+	bool m_bIsDeathMatch;
 	float m_nWaterHeight;
+
 public:
 	SERVER_GAME_STATE m_eGameState;
 
@@ -23,6 +25,8 @@ public:
 public:
 	void StartDeathMatch();
 	void EndDeathMatch();
+public:
+	void SetStage(int nStage);
 
 public:
 	int GetRoundTime();
@@ -33,6 +37,7 @@ public:
 	bool GetDeathMatchState() { return m_bIsDeathMatch; }
 	int GetDeathMatchTime() { return m_nDeathMatchTime; }
 	float GetWaterHeight() { return m_nWaterHeight; }
+	int GetStage() { return m_nStageNum; }
 	SERVER_GAME_STATE GetGameState();
 
 public:

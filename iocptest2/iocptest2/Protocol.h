@@ -12,7 +12,7 @@ typedef unsigned long      DWORD;
 #define MAX_USER 20000
 
 enum QueuedOperation {
-	OP_RECV =1,
+	OP_RECV = 1,
 	OP_SEND,
 	OP_OBJECT,
 	OP_ROUND_TIME,
@@ -46,6 +46,8 @@ enum ServerToClient {
 	SC_DEATHMATCH,
 	SC_ENTER_INGAME,
 	SC_ELEMENTINIT,
+	SC_READY_PLAYER,
+	SC_ACCEPTCLIENT,
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
@@ -72,6 +74,8 @@ enum ClientToServer {
 	CS_DEATHMATCH,
 	CS_ENTER_INGAME,
 	CS_ELEMENTINIT,
+	CS_LOBBYINFO,
+	CS_ACCEPTCLIENT,
 	CS_TOTAL_NUM
 };
 #if 0
@@ -139,7 +143,9 @@ enum ClientToServer {
 
 #define LIMIT_ROUND_TIME 80.f
 
-	
+#define STAGE_ONE 1
+#define STAGE_TWO 2
+
 
 enum SERVER_GAME_STATE
 {
@@ -151,6 +157,7 @@ enum SERVER_GAME_STATE
 	STATE_ROUND_CLEAR,
 	STATE_GAME_END,
 	STATE_DEATH_MATCH,
+	STATE_NEXT_STAGE,
 	STATE_TOTAL_NUM
 };
 #pragma pack (push, 1)
@@ -185,7 +192,7 @@ struct cs_packet_right {
 struct cs_packet_chat {
 	BYTE size;
 	BYTE type;
-//	WCHAR message[100];
+	//	WCHAR message[100];
 };
 
 struct cs_packet_animation {
@@ -208,7 +215,7 @@ struct cs_packet_move_test
 	DWORD direction;
 	XMFLOAT3 LookVector;
 	XMFLOAT3 Position;
-}; 
+};
 struct cs_packet_dominate
 {
 	BYTE size;
@@ -279,6 +286,15 @@ struct cs_packet_serverCheat
 	short mode;
 	short roundTime;
 };
+
+struct cs_packet_LobbySelectInfo
+{
+	BYTE size;
+	BYTE type;
+	WORD nNumofPlayer;
+	WORD nStage;
+};
+
 struct sc_packet_rotate
 {
 	BYTE size;
@@ -372,7 +388,7 @@ struct sc_packet_chat {
 	BYTE size;
 	BYTE type;
 	WORD id;
-//	WCHAR message[100];
+	//	WCHAR message[100];
 };
 struct sc_packet_animation_player {
 	BYTE size;
@@ -383,7 +399,9 @@ struct sc_packet_animation_player {
 struct sc_packet_readyID
 {
 	BYTE size;
+	BYTE type;
 	BYTE id;
+	bool State;
 };
 
 struct sc_packet_RoundTime
@@ -425,4 +443,20 @@ struct sc_packet_ElementInfo
 	WORD z;
 	BYTE elementType;
 };
+struct sc_packet_LobbyInfo
+{
+	BYTE size;
+	BYTE type;
+	BYTE id;
+	WORD nReadyPerson;
+};
+
+struct sc_packet_ClientInfo
+{
+	BYTE size;
+	BYTE type;
+	BYTE id;
+	short clientNum;
+};
+
 #pragma pack (pop)

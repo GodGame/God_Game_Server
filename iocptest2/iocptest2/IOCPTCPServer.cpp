@@ -80,7 +80,7 @@ int CIOCPTCPServer::GetNewClientID()
 }
 bool CIOCPTCPServer::StartServer()
 {
-	
+
 	return false;
 
 }
@@ -108,9 +108,9 @@ void CIOCPTCPServer::InitServer()
 
 	//pWarrock->Initialize();
 	//pWarrock->SetAnimationState(WarrockAnimation::WARROCK_ANI_IDLE);
-//	delete m_pGameObjectTest;
-//	pWarrock->SetPosition()
-	
+	//	delete m_pGameObjectTest;
+	//	pWarrock->SetPosition()
+
 	for (int i = 0; i < 1000; i++)
 	{
 		int z = randomZ(randomEngine);
@@ -124,7 +124,7 @@ void CIOCPTCPServer::InitServer()
 	if (_hIOCP == NULL)
 	{
 		cout << "IOCP InitError" << endl;
-	//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "test");
+		//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "test");
 	}
 }
 
@@ -147,13 +147,16 @@ void CIOCPTCPServer::AcceptThread()
 		sizeof(listen_addr));
 	if (SOCKET_ERROR == errorCode)
 	{
-		cout << "bind Fail" << endl;
-	//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "bind Fail");
+		error_display(__FUNCTION__ "Accept Thread: bind", WSAGetLastError());
+		//cout << "bind Fail" << endl;
+		//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "bind Fail");
 	}
-
+	int opt_val = TRUE;
+	setsockopt(accept_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&opt_val, sizeof(opt_val));
 	errorCode = listen(accept_socket, 10);
 	if (SOCKET_ERROR == errorCode)
 	{
+		error_display(__FUNCTION__ "Accept Thread: listen", WSAGetLastError());
 		cout << "listen Fail" << endl;
 	}
 
@@ -166,7 +169,8 @@ void CIOCPTCPServer::AcceptThread()
 			&addr_len, NULL, NULL);
 		if (INVALID_SOCKET == new_socket)
 		{
-			cout << "Accept Fail" << endl;
+			error_display(__FUNCTION__ "Accept Thread: WSAAccept", WSAGetLastError());
+			//cout << "Accept Fail" << endl;
 		}
 		int new_id = -1;
 		for (auto i = 0; i < MAX_USER; ++i)
@@ -194,10 +198,10 @@ void CIOCPTCPServer::AcceptThread()
 		_pGameObject->m_Player[new_id].m_sock = new_socket;
 		_pGameObject->m_Player[new_id].is_connected = true;
 		_pGameObject->m_Player[new_id].m_ID = new_id;
-	
+
 		for (int i = 0; i < 5; i++)
 		{
-			_pGameObject->m_Player[i].SetPosition(XMFLOAT3(1000+(rand()%100), 300, 320));
+			_pGameObject->m_Player[i].SetPosition(XMFLOAT3(1000 + (rand() % 100), 300, 320));
 		}
 
 		_pGameObject->m_Player[new_id].m_overlapped_ex.operation = (int)(QueuedOperation::OP_RECV);
@@ -215,23 +219,23 @@ void CIOCPTCPServer::AcceptThread()
 		put_player_packet.z = _pGameObject->m_Player[new_id].GetPosition().z;
 		put_player_packet.HP = _pGameObject->m_Player[new_id].m_HP;
 		memcpy(&(put_player_packet.numberOfElement), &(_pGameObject->m_Player[new_id].m_Elements), sizeof(_pGameObject->m_Player[new_id].m_Elements));
-	
+
 		for (auto i = 0; i < 10; i++)
 		{
-			if (true == _pGameObject->m_Player[i].is_connected)
-				SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
+		if (true == _pGameObject->m_Player[i].is_connected)
+		SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
 		}
 		for (auto i = 0; i < 10; ++i)
 		{
-			if (false == _pGameObject->m_Player[i].is_connected) continue;
-			if (i == new_id) continue;
+		if (false == _pGameObject->m_Player[i].is_connected) continue;
+		if (i == new_id) continue;
 
-			put_player_packet.id = i;
-			put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
-			put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
-			put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
-			put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
-			SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), new_id);
+		put_player_packet.id = i;
+		put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
+		put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
+		put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
+		put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
+		SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), new_id);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		sc_packet_GameState gamestate_packet;
@@ -242,18 +246,23 @@ void CIOCPTCPServer::AcceptThread()
 
 		for (auto i = 0; i < 10; ++i)
 		{
-			if (false == _pGameObject->m_Player[i].is_connected) continue;
-			SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
+		if (false == _pGameObject->m_Player[i].is_connected) continue;
+		SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
 		}
 		//////////////////////////////////////////////////////////////////////////
 
-			OVERLAPPED_EX event_over;
-			event_over.operation = (int)QueuedOperation::OP_CONNECTION;
-			PostQueuedCompletionStatus(_hIOCP, 1, new_id,
-				reinterpret_cast<LPOVERLAPPED>(&event_over));
-			_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
-			*/
-		
+		OVERLAPPED_EX event_over;
+		event_over.operation = (int)QueuedOperation::OP_CONNECTION;
+		PostQueuedCompletionStatus(_hIOCP, 1, new_id,
+		reinterpret_cast<LPOVERLAPPED>(&event_over));
+		_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
+		*/
+		sc_packet_ClientInfo client_packet;
+		client_packet.size = sizeof(sc_packet_ClientInfo);
+		client_packet.type = (int)ServerToClient::SC_ACCEPTCLIENT;
+		client_packet.id = new_id;
+		SendPacket(reinterpret_cast<unsigned char*>(&client_packet), new_id);
+
 		DWORD flags = 0;
 		int result = WSARecv(new_socket,
 			&_pGameObject->m_Player[new_id].m_overlapped_ex.wsabuf,
@@ -392,7 +401,7 @@ void CIOCPTCPServer::WorkerThread()
 		}
 		case OP_PLAYERINIT:
 		{
-			
+
 			break;
 		}
 		case OP_MONSTERINIT:
@@ -480,7 +489,7 @@ void CIOCPTCPServer::SendPacket(unsigned char*  packet, int id)
 		if (WSA_IO_PENDING != error_no)
 		{
 			error_display(__FUNCTION__ "SendPacket:WSASend", error_no);
-		
+
 		}
 
 	}
@@ -508,7 +517,7 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		break;
 	}
 	case CS_MOVE:
-//	case CS_ANI_IDLE:
+		//	case CS_ANI_IDLE:
 		Process_Move_Packet(packet, id);
 		break;
 	case CS_ANI_IDLE:
@@ -527,8 +536,28 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		break;
 	}
 	case CS_READY:
+	{
+		cs_packet_ready * ready_packet = reinterpret_cast<cs_packet_ready *>(packet);
+		bool tempState = ready_packet->ready;
 
+		cout << "Client:" << ready_packet->id << " " << boolalpha << ready_packet->ready << endl;
+
+		sc_packet_readyID readyInfo_packet;
+		readyInfo_packet.id = id;
+		readyInfo_packet.size = sizeof(sc_packet_rotate);
+		readyInfo_packet.type = (int)ServerToClient::SC_READY_PLAYER;
+		readyInfo_packet.State = ready_packet->ready;
+		/*	if (false == tempState)
+		readyInfo_packet.State =
+		else if (true == tempState)*/
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&readyInfo_packet), i);
+		}
 		break;
+	}
 	case CS_INPUT:
 		cout << "INPUT" << endl;
 		Process_StateSet_Packet(packet, id);
@@ -568,7 +597,7 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 	case CS_ROTATION:
 	{
 		cs_packet_rotate * test_packet = reinterpret_cast<cs_packet_rotate *>(packet);
-		
+
 		sc_packet_rotate rotate_packet;
 		rotate_packet.id = id;
 		rotate_packet.size = sizeof(sc_packet_rotate);
@@ -576,11 +605,11 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		rotate_packet.cxDelta = test_packet->cxDelta;
 		rotate_packet.cyDelta = test_packet->cyDelta;
 		rotate_packet.LookVector = test_packet->LookVector;
-	
+
 
 		for (int i = 0; i < 10; ++i)
 		{
-				if (i == id) continue;
+			if (i == id) continue;
 			if (false == _pGameObject->m_Player[i].is_connected) continue;
 			SendPacket(reinterpret_cast<unsigned char*>(&rotate_packet), i);
 		}
@@ -658,16 +687,17 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		element_packet.type = (int)ServerToClient::SC_MONSTERINIT;
 		for (int i = 0; i < 1000; i++)
 		{
-			element_packet.elementType =(int)rand()%(ElementType::ELEMENT_TYPE_TOTAL_NUM);
-			element_packet.x = rand() % 1000;	
+			element_packet.elementType = (int)rand() % (ElementType::ELEMENT_TYPE_TOTAL_NUM);
+			element_packet.x = rand() % 1000;
 			element_packet.z = rand() % 1000;
 			SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id); // 생성 즉시 보내는 방법이므로 효율적이지 못함 차후 묶어서 보내는 방법이나 순차적으로 조절해서 보내게 변경할예정
-			//cout << monster_packet.position[i] << endl;
+																			   //cout << monster_packet.position[i] << endl;
 		}
 		//monster_packet.position = MAPMgr.GetRandPos();
 		//SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id);
 		break;
 	}
+
 	default:
 		printf(__FUNCTION__"Unknown PACKET type [%d]\n", packet_type[1]);
 		exit(-1);
@@ -692,7 +722,7 @@ void CIOCPTCPServer::DeathMatchTimer(int id)
 	deathmatch_packet.fWaterHeight = _pGameManager->GetWaterHeight();
 	deathmatch_packet.bDeathMatch = _pGameManager->GetDeathMatchState();
 
-	for (int user_id=0; user_id<MAX_USER; ++user_id)
+	for (int user_id = 0; user_id<MAX_USER; ++user_id)
 	{
 		SendPacket(reinterpret_cast<unsigned char*>(&deathmatch_packet), user_id);
 	}
@@ -755,8 +785,8 @@ void CIOCPTCPServer::RoundTimer(int id)
 	}
 	case STATE_ROUND_CLEAR:
 	{
-		
-		if(_pGameManager->m_nGameRound == 2)
+
+		if (_pGameManager->m_nGameRound == 2)
 		{
 			_pGameManager->m_eGameState = STATE_GAME_END;
 			SendGameState(_pGameManager->GetGameState(), id);
@@ -791,6 +821,11 @@ void CIOCPTCPServer::RoundTimer(int id)
 		break;
 	}
 	case STATE_DEATH_MATCH:
+	{
+
+		break;
+	}
+	case STATE_NEXT_STAGE:
 	{
 
 		break;
@@ -841,7 +876,7 @@ void CIOCPTCPServer::SendGameState(SERVER_GAME_STATE eGamestate, int id)
 
 void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 {
-	
+
 	cs_packet_move_test * test_packet = reinterpret_cast<cs_packet_move_test *>(packet);
 	XMFLOAT3 position = _pGameObject->m_Player[id].GetPosition();
 	XMFLOAT3 direction = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -852,7 +887,7 @@ void CIOCPTCPServer::Process_Move_Packet(unsigned char* packet, int id)
 	XMFLOAT3 tempPosition = _pGameObject->m_Player[id].GetPosition();
 	unsigned char packet_type = packet[1];
 	DWORD dwDirection;
-	
+
 	sc_packet_pos pos_packet;
 	dwDirection = test_packet->direction;
 	cout << dwDirection << endl;
@@ -896,8 +931,8 @@ void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 	cs_packet_damage * my_packet = reinterpret_cast<cs_packet_damage *>(packet);
 	global_lock.lock();
 	_pGameObject->m_Player[my_packet->id].m_HP -= my_packet->damage;
-		cout << "Player " << id <<" Damage!!" <<" hp: "<<_pGameObject->m_Player[my_packet->id].m_HP << endl;
-		global_lock.unlock();
+	cout << "Player " << id << " Damage!!" << " hp: " << _pGameObject->m_Player[my_packet->id].m_HP << endl;
+	global_lock.unlock();
 	sc_packet_playerInfo info_packet;
 	info_packet.HP = _pGameObject->m_Player[my_packet->id].m_HP;
 	info_packet.id = my_packet->id;
@@ -906,7 +941,7 @@ void CIOCPTCPServer::Process_Damage_Packet(unsigned char* packet, int id)
 
 	for (int i = 0; i < 10; ++i)
 	{
-		if(id == i) continue;
+		if (id == i) continue;
 		if (false == _pGameObject->m_Player[i].is_connected) continue;
 		SendPacket(reinterpret_cast<unsigned char*>(&info_packet), i);
 	}
@@ -985,7 +1020,7 @@ void CIOCPTCPServer::Process_Event(event_type curr_event)
 
 		break;
 	}
-	
+
 	default:
 		cout << "Unknown Event Type Detected!\n";
 		exit(-1);

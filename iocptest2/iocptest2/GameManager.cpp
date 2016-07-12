@@ -38,6 +38,14 @@ void CGameManager::EndDeathMatch()
 }
 
 
+void CGameManager::SetStage(int nStage)
+{
+	if (STAGE_ONE == nStage)
+		m_nStageNum = STAGE_ONE;
+	else if (STAGE_TWO == nStage)
+		m_nStageNum = STAGE_TWO;
+}
+
 int CGameManager::GetRoundTime()
 {
 	return m_nRoundTime;
