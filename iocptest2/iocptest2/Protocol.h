@@ -12,7 +12,7 @@ typedef unsigned long      DWORD;
 #define MAX_USER 20000
 
 enum QueuedOperation {
-	OP_RECV = 1,
+	OP_RECV =1,
 	OP_SEND,
 	OP_OBJECT,
 	OP_ROUND_TIME,
@@ -24,6 +24,7 @@ enum QueuedOperation {
 	OP_DEATHMATCH,
 	OP_MONSTERINIT,
 	OP_PLAYERINIT,
+	OP_START,
 	OP_OPERATION_NUM
 };
 enum ServerToClient {
@@ -48,6 +49,10 @@ enum ServerToClient {
 	SC_ELEMENTINIT,
 	SC_READY_PLAYER,
 	SC_ACCEPTCLIENT,
+	SC_SIGNAL,
+	SC_JUMP,
+	SC_STAGESELECT,
+	SC_SERVER_CHEAT,
 	SC_TOTAL_NUM
 };
 enum ClientToServer {
@@ -76,7 +81,20 @@ enum ClientToServer {
 	CS_ELEMENTINIT,
 	CS_LOBBYINFO,
 	CS_ACCEPTCLIENT,
+	CS_SIGNAL,
+	CS_PLAYER_INFO,
+	CS_JUMP,
+	CS_LOADEND,
+	CS_STAGESELECT,
 	CS_TOTAL_NUM
+};
+
+enum SignalType
+{
+	SIG_START,
+	SIG_FOBBIDEN,
+	SIG_END,
+	SIG_TOTAL_NUM
 };
 #if 0
 #define OP_RECV 1
@@ -192,7 +210,7 @@ struct cs_packet_right {
 struct cs_packet_chat {
 	BYTE size;
 	BYTE type;
-	//	WCHAR message[100];
+//	WCHAR message[100];
 };
 
 struct cs_packet_animation {
@@ -215,13 +233,18 @@ struct cs_packet_move_test
 	DWORD direction;
 	XMFLOAT3 LookVector;
 	XMFLOAT3 Position;
-};
+}; 
 struct cs_packet_dominate
 {
 	BYTE size;
 	BYTE type;
 };
 struct cs_packet_Behavior
+{
+	BYTE size;
+	BYTE type;
+};
+struct cs_packet_Jump
 {
 	BYTE size;
 	BYTE type;
@@ -244,10 +267,11 @@ struct cs_packet_Info
 	BYTE size;
 	BYTE type;
 	BYTE id;
-	BYTE infoType;
+	short Kill;
+	short Death;
+	short Point;
 	short HP;
 	short Item;
-	short element;
 };
 struct cs_packet_state {
 	BYTE size;
@@ -295,6 +319,45 @@ struct cs_packet_LobbySelectInfo
 	WORD nStage;
 };
 
+struct cs_packet_RequestStart
+{
+	BYTE size;
+	BYTE type;
+};
+struct cs_packet_LoadEnd
+{
+	BYTE size;
+	BYTE type;
+};
+struct cs_packet_StageSelect
+{
+	BYTE size;
+	BYTE type;
+	int Stage;
+};
+struct cs_packet_GetItem
+{
+	BYTE size;
+	BYTE type;
+	
+};
+struct sc_packet_serverCherat
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+	short mode;
+	float fWaterHeight;
+
+};
+struct sc_packet_ResponeSignal
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+	SignalType sig_type;
+	int Stage;
+};
 struct sc_packet_rotate
 {
 	BYTE size;
@@ -310,6 +373,19 @@ struct sc_packet_dominate
 	BYTE type;
 	WORD id;
 
+};
+struct sc_packet_Jump
+{
+	BYTE size;
+	BYTE type;
+	WORD id;
+
+};
+struct sc_packet_StageSelect
+{
+	BYTE size;
+	BYTE type;
+	int Stage;
 };
 struct sc_packet_Behavior
 {
@@ -360,14 +436,6 @@ struct sc_packet_Deathmatch
 	bool bDeathMatch;
 
 };
-//struct sc_packet_Init_player {
-//	BYTE size;
-//	BYTE type;
-//	WORD id;
-//	float x;
-//	float y;
-//	float z;
-//};
 
 struct sc_packet_Init_player {
 	BYTE size;
@@ -388,7 +456,7 @@ struct sc_packet_chat {
 	BYTE size;
 	BYTE type;
 	WORD id;
-	//	WCHAR message[100];
+//	WCHAR message[100];
 };
 struct sc_packet_animation_player {
 	BYTE size;
@@ -449,6 +517,7 @@ struct sc_packet_LobbyInfo
 	BYTE type;
 	BYTE id;
 	WORD nReadyPerson;
+	WORD StageType;
 };
 
 struct sc_packet_ClientInfo

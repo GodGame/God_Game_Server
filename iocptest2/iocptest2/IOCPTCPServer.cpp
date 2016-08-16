@@ -62,7 +62,7 @@ CIOCPTCPServer::CIOCPTCPServer()
 	m_bTimerSwitch = false;
 
 	m_fFrameTime = 0.0f;
-
+	m_nLoadCount = 0;
 }
 
 
@@ -108,8 +108,8 @@ void CIOCPTCPServer::InitServer()
 
 	//pWarrock->Initialize();
 	//pWarrock->SetAnimationState(WarrockAnimation::WARROCK_ANI_IDLE);
-	//	delete m_pGameObjectTest;
-	//	pWarrock->SetPosition()
+//	delete m_pGameObjectTest;
+//	pWarrock->SetPosition()
 
 	for (int i = 0; i < 1000; i++)
 	{
@@ -149,7 +149,7 @@ void CIOCPTCPServer::AcceptThread()
 	{
 		error_display(__FUNCTION__ "Accept Thread: bind", WSAGetLastError());
 		//cout << "bind Fail" << endl;
-		//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "bind Fail");
+	//	(CLogMgr::GetInstance()).InsertLog(LOGTYPE_SERVER_SYSTEM, __FILE__, __FUNCTION__, __LINE__, "bind Fail");
 	}
 	int opt_val = TRUE;
 	setsockopt(accept_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&opt_val, sizeof(opt_val));
@@ -222,20 +222,20 @@ void CIOCPTCPServer::AcceptThread()
 
 		for (auto i = 0; i < 10; i++)
 		{
-		if (true == _pGameObject->m_Player[i].is_connected)
-		SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
+			if (true == _pGameObject->m_Player[i].is_connected)
+				SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
 		}
 		for (auto i = 0; i < 10; ++i)
 		{
-		if (false == _pGameObject->m_Player[i].is_connected) continue;
-		if (i == new_id) continue;
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			if (i == new_id) continue;
 
-		put_player_packet.id = i;
-		put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
-		put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
-		put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
-		put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
-		SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), new_id);
+			put_player_packet.id = i;
+			put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
+			put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
+			put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
+			put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
+			SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), new_id);
 		}
 		//////////////////////////////////////////////////////////////////////////
 		sc_packet_GameState gamestate_packet;
@@ -246,22 +246,36 @@ void CIOCPTCPServer::AcceptThread()
 
 		for (auto i = 0; i < 10; ++i)
 		{
-		if (false == _pGameObject->m_Player[i].is_connected) continue;
-		SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
 		}
 		//////////////////////////////////////////////////////////////////////////
 
-		OVERLAPPED_EX event_over;
-		event_over.operation = (int)QueuedOperation::OP_CONNECTION;
-		PostQueuedCompletionStatus(_hIOCP, 1, new_id,
-		reinterpret_cast<LPOVERLAPPED>(&event_over));
-		_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
-		*/
+			OVERLAPPED_EX event_over;
+			event_over.operation = (int)QueuedOperation::OP_CONNECTION;
+			PostQueuedCompletionStatus(_hIOCP, 1, new_id,
+				reinterpret_cast<LPOVERLAPPED>(&event_over));
+			_pGameManager->m_eGameState = STATE_READY;//STATE_RO ENTER;
+			*/
 		sc_packet_ClientInfo client_packet;
 		client_packet.size = sizeof(sc_packet_ClientInfo);
 		client_packet.type = (int)ServerToClient::SC_ACCEPTCLIENT;
 		client_packet.id = new_id;
 		SendPacket(reinterpret_cast<unsigned char*>(&client_packet), new_id);
+
+
+		OVERLAPPED_EX event_over3;
+		event_over3.operation = OP_CONNECTION;
+		PostQueuedCompletionStatus(_hIOCP, 1, new_id,
+			reinterpret_cast<LPOVERLAPPED>(&event_over3));
+
+
+
+
+		//OVERLAPPED_EX* event_over2 = new OVERLAPPED_EX;
+		//event_over2->operation = (int)QueuedOperation::OP_CONNECTION;
+		//PostQueuedCompletionStatus(_hIOCP, 1, new_id,
+		//	reinterpret_cast<LPOVERLAPPED>(&event_over2));
 
 		DWORD flags = 0;
 		int result = WSARecv(new_socket,
@@ -401,6 +415,59 @@ void CIOCPTCPServer::WorkerThread()
 		}
 		case OP_PLAYERINIT:
 		{
+			cout << "Player Init" << key << endl;
+			sc_packet_put_player put_player_packet;
+			put_player_packet.id = key;
+			put_player_packet.size = sizeof(put_player_packet);
+			put_player_packet.type = (int)(ServerToClient::SC_PUT_PLAYER);
+			put_player_packet.x = _pGameObject->m_Player[key].GetPosition().x;
+			put_player_packet.y = _pGameObject->m_Player[key].GetPosition().y;
+			put_player_packet.z = _pGameObject->m_Player[key].GetPosition().z;
+			put_player_packet.HP = _pGameObject->m_Player[key].m_HP;
+			memcpy(&(put_player_packet.numberOfElement), &(_pGameObject->m_Player[key].m_Elements), sizeof(_pGameObject->m_Player[key].m_Elements));
+
+			for (auto i = 0; i < 10; i++)
+			{
+				if (true == _pGameObject->m_Player[i].is_connected)
+					SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
+			}
+			for (auto i = 0; i < 10; ++i)
+			{
+				if (false == _pGameObject->m_Player[i].is_connected) continue;
+				if (i == key) continue;
+
+				put_player_packet.id = i;
+				put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
+				put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
+				put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
+				put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
+				SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), key);
+			}
+			//////////////////////////////////////////////////////////////////////////
+			sc_packet_GameState gamestate_packet;
+			gamestate_packet.size = sizeof(sc_packet_GameState);
+			gamestate_packet.type = (int)ServerToClient::SC_GAME_STATE;
+			gamestate_packet.id = key;
+			gamestate_packet.gamestate = STATE_READY;
+
+			for (auto i = 0; i < 10; ++i)
+			{
+				if (false == _pGameObject->m_Player[i].is_connected) continue;
+				SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
+			}
+			/*OVERLAPPED_EX event_over9;
+			event_over9.operation = OP_PLAYERINIT;
+			PostQueuedCompletionStatus(_hIOCP, 1, key,
+				reinterpret_cast<LPOVERLAPPED>(&event_over9));*/
+			
+			//delete overlap;
+			break;
+		}
+		case OP_START:
+		{
+			m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+			_pGameManager->m_eGameState = STATE_READY;
+			m_bTimerSwitch = true;
 
 			break;
 		}
@@ -433,17 +500,31 @@ void CIOCPTCPServer::WorkerThread()
 		}
 		case OP_CONNECTION:
 		{
+			cout << "Connenction " << key << endl;
 			_pGameManager->m_nConnectCount += 1;
-			if (_pGameManager->m_nConnectCount == 1)
+			if (_pGameManager->m_nConnectCount == 2)
 			{
-				m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
-				_pGameManager->m_eGameState = STATE_READY;
-				m_bTimerSwitch = true;
+
+				/*	OVERLAPPED_EX event_over;
+					event_over.operation = (int)QueuedOperation::OP_PLAYERINIT;
+					PostQueuedCompletionStatus(_hIOCP, 1, key,
+						reinterpret_cast<LPOVERLAPPED>(&event_over));
+
+
+					m_TimeEvent.AddTimer(key, EVENT_ROUND_TIMER, 1000);
+					_pGameManager->m_eGameState = STATE_READY;
+					m_bTimerSwitch = true;*/
+
 			}
+			//delete overlap;
 			break;
 		}
 		case OP_READY:
 		{
+			//_pGameManager->AddReadyNum();
+
+			cout << "Ready Player" << key << endl;
+			cout << "Current Ready Player" << _pGameManager->GetReadyPlayerNum() << endl;
 			break;
 		}
 		default:
@@ -514,8 +595,71 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		{
 			_pGameManager->m_nRoundTime -= 5;
 		}
+		else if (cheat_packet->mode == 2)
+		{
+			cout << "물높이 초기화" << endl;
+			//_pGameManager->m_nWaterHeight = 70.f;
+			sc_packet_serverCherat sc_cheat_packet;
+			sc_cheat_packet.id = id;
+			sc_cheat_packet.size = sizeof(sc_packet_serverCherat);
+			sc_cheat_packet.type = (int)ServerToClient::SC_SERVER_CHEAT;
+			sc_cheat_packet.fWaterHeight = 70.f;
+			sc_cheat_packet.mode = 2;
+			for (int i = 0; i < 10; ++i)
+			{
+				if (false == _pGameObject->m_Player[i].is_connected) continue;
+				SendPacket(reinterpret_cast<unsigned char*>(&sc_cheat_packet), i);
+			}
+		}
+		else if (cheat_packet->mode == 3)
+		{
+			cout << "물높이 상승" << endl;
+			//_pGameManager->m_nWaterHeight = 70.f;
+			sc_packet_serverCherat sc_cheat_packet;
+			sc_cheat_packet.id = id;
+			sc_cheat_packet.size = sizeof(sc_packet_serverCherat);
+			sc_cheat_packet.type = (int)ServerToClient::SC_SERVER_CHEAT;
+			sc_cheat_packet.fWaterHeight = 70.f;
+			sc_cheat_packet.mode = 3;
+			for (int i = 0; i < 10; ++i)
+			{
+				if (false == _pGameObject->m_Player[i].is_connected) continue;
+				SendPacket(reinterpret_cast<unsigned char*>(&sc_cheat_packet), i);
+			}
+		}
+		else if (cheat_packet->mode ==4)
+		{
+			cout << "물높이 하강" << endl;
+			sc_packet_serverCherat sc_cheat_packet;
+			sc_cheat_packet.id = id;
+			sc_cheat_packet.size = sizeof(sc_packet_serverCherat);
+			sc_cheat_packet.type = (int)ServerToClient::SC_SERVER_CHEAT;
+			sc_cheat_packet.fWaterHeight = 70.f;
+			sc_cheat_packet.mode = 4;
+			for (int i = 0; i < 10; ++i)
+			{
+				if (false == _pGameObject->m_Player[i].is_connected) continue;
+				SendPacket(reinterpret_cast<unsigned char*>(&sc_cheat_packet), i);
+			}
+		}
 		break;
 	}
+	case CS_LOADEND:
+	{
+		global_lock.lock();
+		m_nLoadCount++;
+		global_lock.unlock();
+
+		if (m_nLoadCount == 2)
+		{
+			OVERLAPPED_EX event_over;
+			event_over.operation = (int)QueuedOperation::OP_START;
+			PostQueuedCompletionStatus(_hIOCP, 1, id,
+				reinterpret_cast<LPOVERLAPPED>(&event_over));
+		}
+		break;
+	}
+
 	case CS_MOVE:
 		//	case CS_ANI_IDLE:
 		Process_Move_Packet(packet, id);
@@ -541,21 +685,28 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		bool tempState = ready_packet->ready;
 
 		cout << "Client:" << ready_packet->id << " " << boolalpha << ready_packet->ready << endl;
-
+		//_pGameManager->AddReadyNum();
 		sc_packet_readyID readyInfo_packet;
 		readyInfo_packet.id = id;
 		readyInfo_packet.size = sizeof(sc_packet_rotate);
 		readyInfo_packet.type = (int)ServerToClient::SC_READY_PLAYER;
 		readyInfo_packet.State = ready_packet->ready;
-		/*	if (false == tempState)
-		readyInfo_packet.State =
-		else if (true == tempState)*/
+		if (false == tempState)
+			_pGameManager->m_nReadyNum--;
+		else if (true == tempState)
+			_pGameManager->m_nReadyNum++;
 
-		for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 2; ++i)
 		{
 			if (false == _pGameObject->m_Player[i].is_connected) continue;
 			SendPacket(reinterpret_cast<unsigned char*>(&readyInfo_packet), i);
 		}
+		OVERLAPPED_EX event_over;
+		event_over.operation = (int)QueuedOperation::OP_READY;
+		PostQueuedCompletionStatus(_hIOCP, 1, id,
+			reinterpret_cast<LPOVERLAPPED>(&event_over));
+
+
 		break;
 	}
 	case CS_INPUT:
@@ -563,8 +714,34 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		Process_StateSet_Packet(packet, id);
 		break;
 	case CS_CHAR_DAMAGE:
-		Process_Damage_Packet(packet, id);
+	{
 		break;
+	}
+	case CS_PLAYER_INFO:
+	{
+		 
+		cs_packet_Info * c_info_packet = reinterpret_cast<cs_packet_Info *>(packet);
+		
+		
+
+		sc_packet_playerInfo info_packet;
+		info_packet.id = c_info_packet->id;
+		info_packet.size = sizeof(sc_packet_playerInfo);
+		info_packet.type = (int)ServerToClient::SC_PLAYER_INFO;
+		info_packet.death = c_info_packet->Death;
+		info_packet.HP = c_info_packet->HP;
+		info_packet.Item = c_info_packet->Item;
+		info_packet.kill = c_info_packet->Kill;
+		info_packet.point = c_info_packet->Point;
+		for (int i = 0; i < 10; ++i)
+		{
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			if (i == id) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&info_packet), i);
+		}
+		break;
+	}
+		//Process_Damage_Packet(packet, id);
 	case CS_DOMINATE:
 	{
 
@@ -577,6 +754,21 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 		{
 			if (false == _pGameObject->m_Player[i].is_connected) continue;
 			SendPacket(reinterpret_cast<unsigned char*>(&dominate_packet), i);
+		}
+		break;
+	}
+	case CS_JUMP:
+	{
+
+		sc_packet_Jump Jump_packet;
+		Jump_packet.id = id;
+		Jump_packet.size = sizeof(sc_packet_Jump);
+		Jump_packet.type = (int)ServerToClient::SC_JUMP;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			if (false == _pGameObject->m_Player[i].is_connected) continue;
+			SendPacket(reinterpret_cast<unsigned char*>(&Jump_packet), i);
 		}
 		break;
 	}
@@ -617,46 +809,55 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 	}
 	case CS_PLAYERINIT:
 	{
-		sc_packet_put_player put_player_packet;
-		put_player_packet.id = id;
-		put_player_packet.size = sizeof(put_player_packet);
-		put_player_packet.type = (int)(ServerToClient::SC_PUT_PLAYER);
-		put_player_packet.x = _pGameObject->m_Player[id].GetPosition().x;
-		put_player_packet.y = _pGameObject->m_Player[id].GetPosition().y;
-		put_player_packet.z = _pGameObject->m_Player[id].GetPosition().z;
-		put_player_packet.HP = _pGameObject->m_Player[id].m_HP;
-		memcpy(&(put_player_packet.numberOfElement), &(_pGameObject->m_Player[id].m_Elements), sizeof(_pGameObject->m_Player[id].m_Elements));
+		OVERLAPPED_EX* event_over = new OVERLAPPED_EX;
+		event_over->operation = OP_PLAYERINIT;
+		PostQueuedCompletionStatus(_hIOCP, 1, id,
+			reinterpret_cast<LPOVERLAPPED>(&event_over));
+		cout << "CS_PLAYERINIT" << endl;
+		//sc_packet_put_player put_player_packet;
+		//put_player_packet.id = id;
+		//put_player_packet.size = sizeof(put_player_packet);
+		//put_player_packet.type = (int)(ServerToClient::SC_PUT_PLAYER);
+		//put_player_packet.x = _pGameObject->m_Player[id].GetPosition().x;
+		//put_player_packet.y = _pGameObject->m_Player[id].GetPosition().y;
+		//put_player_packet.z = _pGameObject->m_Player[id].GetPosition().z;
+		//put_player_packet.HP = _pGameObject->m_Player[id].m_HP;
+		//memcpy(&(put_player_packet.numberOfElement), &(_pGameObject->m_Player[id].m_Elements), sizeof(_pGameObject->m_Player[id].m_Elements));
 
-		for (auto i = 0; i < 10; i++)
-		{
-			if (true == _pGameObject->m_Player[i].is_connected)
-				SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
-		}
-		for (auto i = 0; i < 10; ++i)
-		{
-			if (false == _pGameObject->m_Player[i].is_connected) continue;
-			if (i == id) continue;
+		//for (auto i = 0; i < 10; i++)
+		//{
+		//	if (true == _pGameObject->m_Player[i].is_connected)
+		//		SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), i);
+		//}
+		//for (auto i = 0; i < 10; ++i)
+		//{
+		//	if (false == _pGameObject->m_Player[i].is_connected) continue;
+		//	if (i == id) continue;
 
-			put_player_packet.id = i;
-			put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
-			put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
-			put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
-			put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
-			SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), id);
-		}
-		//////////////////////////////////////////////////////////////////////////
-		sc_packet_GameState gamestate_packet;
-		gamestate_packet.size = sizeof(sc_packet_GameState);
-		gamestate_packet.type = (int)ServerToClient::SC_GAME_STATE;
-		gamestate_packet.id = id;
-		gamestate_packet.gamestate = STATE_TOTAL_NUM;
+		//	put_player_packet.id = i;
+		//	put_player_packet.x = _pGameObject->m_Player[i].GetPosition().x;
+		//	put_player_packet.y = _pGameObject->m_Player[i].GetPosition().y;
+		//	put_player_packet.z = _pGameObject->m_Player[i].GetPosition().z;
+		//	put_player_packet.HP = _pGameObject->m_Player[i].m_HP;
+		//	SendPacket(reinterpret_cast<unsigned char*>(&put_player_packet), id);
+		//}
+		////////////////////////////////////////////////////////////////////////////
+		//sc_packet_GameState gamestate_packet;
+		//gamestate_packet.size = sizeof(sc_packet_GameState);
+		//gamestate_packet.type = (int)ServerToClient::SC_GAME_STATE;
+		//gamestate_packet.id = id;
+		//gamestate_packet.gamestate = STATE_TOTAL_NUM;
 
-		for (auto i = 0; i < 10; ++i)
-		{
-			if (false == _pGameObject->m_Player[i].is_connected) continue;
-			SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
-		}
-		//////////////////////////////////////////////////////////////////////////
+		//for (auto i = 0; i < 10; ++i)
+		//{
+		//	if (false == _pGameObject->m_Player[i].is_connected) continue;
+		//	SendPacket(reinterpret_cast<unsigned char*>(&gamestate_packet), i);
+		//}
+		/*OVERLAPPED_EX* event_over = new OVERLAPPED_EX;
+			event_over->operation = OP_CONNECTION;
+			PostQueuedCompletionStatus(_hIOCP, 1, id,
+				reinterpret_cast<LPOVERLAPPED>(&event_over));*/
+				//////////////////////////////////////////////////////////////////////////
 
 		break;
 	}
@@ -691,10 +892,57 @@ void CIOCPTCPServer::ProcessPacket(unsigned char* packet, int id)
 			element_packet.x = rand() % 1000;
 			element_packet.z = rand() % 1000;
 			SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id); // 생성 즉시 보내는 방법이므로 효율적이지 못함 차후 묶어서 보내는 방법이나 순차적으로 조절해서 보내게 변경할예정
-																			   //cout << monster_packet.position[i] << endl;
+			//cout << monster_packet.position[i] << endl;
 		}
 		//monster_packet.position = MAPMgr.GetRandPos();
 		//SendPacket(reinterpret_cast<unsigned char*>(&element_packet), id);
+		break;
+	}
+	case CS_LOBBYINFO:
+	case CS_STAGESELECT:
+	{
+		cs_packet_StageSelect * lobby_packet = reinterpret_cast<cs_packet_StageSelect *>(packet);
+		int Stage = lobby_packet->Stage;
+		cout << "Select Stage:" << Stage << endl;
+		_pGameManager->SetStage(Stage);
+
+		break;
+	}
+	case CS_SIGNAL:
+	{
+		cout << "SIGNAL" << endl;
+		sc_packet_ResponeSignal signal_packet;
+		signal_packet.id = id;
+		signal_packet.size = sizeof(sc_packet_ResponeSignal);
+		signal_packet.type = (int)ServerToClient::SC_SIGNAL;
+		cout << _pGameManager->GetReadyPlayerNum() << endl;
+		cout << _pGameManager->GetConnectPlayerNum() << endl;
+		if (_pGameManager->GetConnectPlayerNum() < 2)
+		{
+			cout << "FOBBIDEN" << endl;
+			signal_packet.sig_type = SIG_FOBBIDEN;
+			cout << signal_packet.sig_type << endl;
+			for (int i = 0; i < 4; ++i)
+				SendPacket(reinterpret_cast<unsigned char*>(&signal_packet), i);
+		}
+		else if (_pGameManager->GetConnectPlayerNum() >= 2)
+		{
+			cout << "START" << endl;
+			signal_packet.sig_type = SIG_START;
+			cout << signal_packet.sig_type << endl;
+			for (int i = 0; i < 4; ++i)
+				SendPacket(reinterpret_cast<unsigned char*>(&signal_packet), i);
+			OVERLAPPED_EX event_over;
+			event_over.operation = (int)QueuedOperation::OP_PLAYERINIT;
+			PostQueuedCompletionStatus(_hIOCP, 1, id,
+				reinterpret_cast<LPOVERLAPPED>(&event_over));
+		}
+		else
+		{
+			signal_packet.sig_type = SIG_END;
+			cout << signal_packet.sig_type << endl;
+		}
+		//signal_packet.sig_type = 
 		break;
 	}
 
@@ -722,7 +970,7 @@ void CIOCPTCPServer::DeathMatchTimer(int id)
 	deathmatch_packet.fWaterHeight = _pGameManager->GetWaterHeight();
 	deathmatch_packet.bDeathMatch = _pGameManager->GetDeathMatchState();
 
-	for (int user_id = 0; user_id<MAX_USER; ++user_id)
+	for (int user_id = 0; user_id < MAX_USER; ++user_id)
 	{
 		SendPacket(reinterpret_cast<unsigned char*>(&deathmatch_packet), user_id);
 	}

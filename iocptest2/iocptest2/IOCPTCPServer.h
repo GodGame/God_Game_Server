@@ -26,6 +26,7 @@ class CIOCPTCPServer
 	CGameTimer* _pTimer;
 	CGameManager* _pGameManager;
 	float m_fFrameTime;
+	int m_nLoadCount;
 	default_random_engine randomEngine;
 	uniform_int_distribution<int> randomX;
 	uniform_int_distribution<int> randomZ;
